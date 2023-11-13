@@ -1,2 +1,5 @@
 # Projet-Go
-Periode B : Projet Go 
+Periode B : Projet Go <br />
+Groupe 205-206 : <br />
+Gobigan MATHIALAHAN <br />
+Riad FAZOURI <br />
