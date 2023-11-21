@@ -7,6 +7,8 @@
  */
 package Board;
 
+import java.awt.*;
+
 public class Board implements IBoard{
     private Stone[][] board; //board of the game
     private final int size; //size of the board
@@ -107,6 +109,17 @@ public class Board implements IBoard{
         if (row < 2 || row > size) {
             System.out.println("Ligne incorrecte : " + row);
             return;
+        }
+
+
+        //TODO
+        int columnIndex = (column - 'A')/size;
+        int rowIndex = row - 1;
+
+        if (color.equals("black")) {
+            this.board[rowIndex][columnIndex] = Stone.BLACK;
+        } else {
+            this.board[rowIndex][columnIndex] = Stone.WHITE;
         }
     }
 }
