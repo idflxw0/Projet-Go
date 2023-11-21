@@ -8,19 +8,8 @@
 package Board;
 
 public class Board implements IBoard{
-
-    final int DEFAULT_SIZE = 19; //defaut size of the board
     private Stone[][] board; //board of the game
     private final int size; //size of the board
-
-    /**
-     * Create a board of size 19x19
-     */
-    public Board() {
-        this.board = new Stone[DEFAULT_SIZE][DEFAULT_SIZE]; //by default the size of the board is 19x19
-        this.size = DEFAULT_SIZE;
-        initBoard();
-    }
 
     /**
      * Create a board of size x size
@@ -44,16 +33,6 @@ public class Board implements IBoard{
             }
         }
     }
-
-    /**
-     * Initialise the board with the size
-     * @param size size of the board
-     */
-    @Override
-    public void boardSize(int size) {
-        new Board(size);
-    }
-
 
     /**
      * Show the board
@@ -84,5 +63,10 @@ public class Board implements IBoard{
             System.out.printf((char)('A' + i) + " ");
         }
         System.out.println();
+    }
+
+    @Override
+    public void clearBoard() {
+        this.initBoard();
     }
 }

@@ -5,6 +5,6 @@
 package Board;
 
 public interface IBoard {
-    void boardSize(int size);
     void showBoard();
+    void clearBoard();
 }
