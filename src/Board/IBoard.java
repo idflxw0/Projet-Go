@@ -7,4 +7,5 @@ package Board;
 public interface IBoard {
     void showBoard();
     void clearBoard();
+    void play(String color, String pos);
 }

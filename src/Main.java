@@ -2,6 +2,8 @@ import Board.Board;
 import Board.IBoard;
 
 import java.util.Scanner;
+import Board.IllegalMoveException;
+import org.w3c.dom.ls.LSOutput;
 
 public class Main {
     private static int nbCommands = 1;
@@ -21,8 +23,8 @@ public class Main {
                     board = new Board(size);
                     System.out.println("=" + nbCommands);
                     nbCommands++;
-                } catch (NumberFormatException e) {
-                    System.out.println("Taille du plateau invalide: " + args[1]);
+                } catch (IllegalMoveException e) {
+                    System.out.println("Taille du plateau invalide: " + Integer.parseInt(input.split(" ")[1]));
                     System.exit(1);
                 }
             }
@@ -34,6 +36,13 @@ public class Main {
                 }
                 else if (input.contains("clear_board")) {
                     board.clearBoard();
+                    System.out.println("=" + nbCommands);
+                    nbCommands++;
+                }
+                else if (input.contains("play")) {
+                    String color = input.split(" ")[1];
+                    String command = input.split(" ")[2];
+                    board.play(color,command);
                     System.out.println("=" + nbCommands);
                     nbCommands++;
                 }
@@ -50,5 +59,7 @@ public class Main {
             input = sc.nextLine();
         }
         sc.close();
+        System.out.print("=" + nbCommands);
     }
+
 }
