@@ -18,7 +18,7 @@ public class Main {
         while (!input.equals("quit")) {
             input = input.trim().toLowerCase();
             if (input.contains("boardsize") && board == null) {
-                try {
+                try { //TODO pas une bonne idée d'utiliser try and catch. faut revoir
                     size = Integer.parseInt(input.split(" ")[1]);
                     board = new Board(size);
                     System.out.println("=" + nbCommands);

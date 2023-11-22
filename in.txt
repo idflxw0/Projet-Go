@@ -1,0 +1,10 @@
+boardsize 24
+play black D3
+play white C1
+play black C5
+play red C5
+play white E2
+play black B1
+play white D10
+showboard
+quit

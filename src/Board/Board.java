@@ -86,7 +86,7 @@ public class Board implements IBoard{
             return;
         }
 
-        char column = pos.charAt(0);
+        char column = pos.toUpperCase().charAt(0);
         String rowString = pos.substring(1);
 
         if (!Character.isLetter(column)) {
@@ -106,14 +106,14 @@ public class Board implements IBoard{
             return;
         }
 
-        if (row < 2 || row > size) {
+        if (row < 1 || row > size) {
             System.out.println("Ligne incorrecte : " + row);
             return;
         }
 
-
         //TODO
-        int columnIndex = (column - 'A')/size;
+        int columnIndex = IBoard.getAlphabetIndex(column);
+//        System.out.println("Colmun index is " + columnIndex);
         int rowIndex = row - 1;
 
         if (color.equals("black")) {
@@ -122,4 +122,5 @@ public class Board implements IBoard{
             this.board[rowIndex][columnIndex] = Stone.WHITE;
         }
     }
+
 }
