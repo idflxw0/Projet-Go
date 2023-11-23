@@ -111,9 +111,7 @@ public class Board implements IBoard{
             return;
         }
 
-        //TODO
-        int columnIndex = IBoard.getAlphabetIndex(column);
-//        System.out.println("Colmun index is " + columnIndex);
+        int columnIndex = column - 'A';
         int rowIndex = row - 1;
 
         if (color.equals("black")) {
@@ -123,4 +121,14 @@ public class Board implements IBoard{
         }
     }
 
+    private void placeStones(int row, int column, String color) {
+        if(notSucide(row, column,color)) {
+
+        }
+    }
+
+    private boolean notSucide(int row, int column, String color) {
+        if((row < 1 || row > size) || (column < 1 || column > size)) return false;
+        return board[row][column - 1] == Stone.EMPTY && board[row][column + 1] == Stone.EMPTY && board[row - 1][column] == Stone.EMPTY && board[row + 1][column] == Stone.EMPTY;
+    }
 }
