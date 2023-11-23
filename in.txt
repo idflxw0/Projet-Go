@@ -3,6 +3,6 @@ play white B3
 play white C2
 play white D3
 play white C4
-play black C3
+play black C5
 showboard
 quit

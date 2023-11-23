@@ -9,7 +9,7 @@ public enum Stone {
         return switch (this) {
             case BLACK -> "B";
             case WHITE -> "W";
-            case EMPTY -> "."; // Using '+' or any other character to represent an empty space
+            case EMPTY -> ".";
             default -> throw new IllegalArgumentException();
         };
     }

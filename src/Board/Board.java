@@ -7,8 +7,6 @@
  */
 package Board;
 
-import java.awt.*;
-
 public class Board implements IBoard{
     private Stone[][] board; //board of the game
     private final int size; //size of the board
@@ -93,11 +91,10 @@ public class Board implements IBoard{
             System.out.println("Colonne incorrecte : " + column);
             return;
         }
-        if (!rowString.matches("\\d+")) { //matches if the string contains only digits
+        if (!rowString.matches("\\d+")) {
             System.out.println("Ligne incorrecte : " + rowString);
             return;
         }
-
         int row;
         try {
             row = Integer.parseInt(rowString);
@@ -105,30 +102,38 @@ public class Board implements IBoard{
             System.out.println("Ligne incorrecte : " + rowString);
             return;
         }
-
         if (row < 1 || row > size) {
             System.out.println("Ligne incorrecte : " + row);
             return;
         }
+        Stone type = null;
+        if (color.equals("black")) type = Stone.BLACK;
+        else type = Stone.WHITE;
+        placeStones(row,column,type);
+    }
 
+    private void placeStones(int row, char column, Stone color) {
         int columnIndex = column - 'A';
         int rowIndex = row - 1;
-
-        if (color.equals("black")) {
-            this.board[rowIndex][columnIndex] = Stone.BLACK;
-        } else {
-            this.board[rowIndex][columnIndex] = Stone.WHITE;
+        if(isplaceable(rowIndex,columnIndex) && !notSuicide(rowIndex, columnIndex,color)) {
+            if (color == Stone.BLACK) {
+                this.board[rowIndex][columnIndex] = Stone.BLACK;
+            } else {
+                this.board[rowIndex][columnIndex] = Stone.WHITE;
+            }
         }
     }
 
-    private void placeStones(int row, int column, String color) {
-        if(notSucide(row, column,color)) {
-
-        }
+    private boolean isplaceable(int row, int column) {
+        return this.board[row][column] == Stone.EMPTY;
     }
 
-    private boolean notSucide(int row, int column, String color) {
-        if((row < 1 || row > size) || (column < 1 || column > size)) return false;
-        return board[row][column - 1] == Stone.EMPTY && board[row][column + 1] == Stone.EMPTY && board[row - 1][column] == Stone.EMPTY && board[row + 1][column] == Stone.EMPTY;
+    private boolean notSuicide(int row, int column, Stone color_w_place) {
+        if (row < 1 || row > size || column < 1 || column > size) return false;
+        boolean top = ((board[row-1][column] != color_w_place) && board[row-1][column] != Stone.EMPTY);
+        boolean bottom  = ((board[row+1][column] != color_w_place) && board[row-1][column] != Stone.EMPTY);
+        boolean left  = ((board[row][column - 1] != color_w_place) && board[row-1][column] != Stone.EMPTY);
+        boolean right  = ((board[row][column + 1] != color_w_place) && board[row-1][column] != Stone.EMPTY);
+        return top && bottom && left && right;
     }
 }
