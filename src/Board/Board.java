@@ -74,14 +74,14 @@ public class Board implements IBoard{
     }
 
     @Override
-    public void play(String color,String pos)  {
+    public boolean play(String color,String pos)  {
         if (!color.equals("black") && !color.equals("white")) {
             System.out.println("Couleur incorrecte : "  + color);
-            return;
+            return false;
         }
         if (pos.length() < 2) {
             System.out.println("position incorrecte : " + pos);
-            return;
+            return false;
         }
 
         char column = pos.toUpperCase().charAt(0);
@@ -89,51 +89,51 @@ public class Board implements IBoard{
 
         if (!Character.isLetter(column)) {
             System.out.println("Colonne incorrecte : " + column);
-            return;
+            return false;
         }
         if (!rowString.matches("\\d+")) {
             System.out.println("Ligne incorrecte : " + rowString);
-            return;
+            return false;
         }
         int row;
         try {
             row = Integer.parseInt(rowString);
         } catch (NumberFormatException e) {
             System.out.println("Ligne incorrecte : " + rowString);
-            return;
+            return false;
         }
         if (row < 1 || row > size) {
             System.out.println("Ligne incorrecte : " + row);
-            return;
+            return false;
         }
         Stone type = null;
         if (color.equals("black")) type = Stone.BLACK;
         else type = Stone.WHITE;
-        placeStones(row,column,type);
+
+        return placeStones(row,column,type);
     }
 
-    private void placeStones(int row, char column, Stone color) {
+    private boolean placeStones(int row, char column, Stone color) {
         int columnIndex = column - 'A';
         int rowIndex = row - 1;
-        if(isplaceable(rowIndex,columnIndex) && !notSuicide(rowIndex, columnIndex,color)) {
+        if(isplaceable(rowIndex, columnIndex) && !isSuicide(rowIndex, columnIndex,color)) {
             if (color == Stone.BLACK) {
                 this.board[rowIndex][columnIndex] = Stone.BLACK;
             } else {
                 this.board[rowIndex][columnIndex] = Stone.WHITE;
             }
+            return true;
         }
+        return false;
     }
 
-    private boolean isplaceable(int row, int column) {
+    public boolean isplaceable(int row, int column) {
         return this.board[row][column] == Stone.EMPTY;
     }
 
-    private boolean notSuicide(int row, int column, Stone color_w_place) {
+    private boolean isSuicide(int row, int column, Stone color_w_place) {
         if (row < 1 || row > size || column < 1 || column > size) return false;
-        boolean top = ((board[row-1][column] != color_w_place) && board[row-1][column] != Stone.EMPTY);
-        boolean bottom  = ((board[row+1][column] != color_w_place) && board[row-1][column] != Stone.EMPTY);
-        boolean left  = ((board[row][column - 1] != color_w_place) && board[row-1][column] != Stone.EMPTY);
-        boolean right  = ((board[row][column + 1] != color_w_place) && board[row-1][column] != Stone.EMPTY);
-        return top && bottom && left && right;
+//        if(board[row-1][column] != color_w_place)
+        return false;
     }
 }

@@ -7,5 +7,6 @@ package Board;
 public interface IBoard {
     void showBoard();
     void clearBoard();
-    void play(String color, String pos);
+    boolean play(String color, String pos);
+    boolean isplaceable(int row, int column);
 }
