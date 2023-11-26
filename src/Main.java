@@ -33,8 +33,8 @@ public class Main {
             }
             else if (board != null ) {
                 if (input.contains("showboard")) {
-                    board.showBoard();
                     System.out.println("=" + nbCommands);
+                    board.showBoard();
                     nbCommands++;
                 }
                 else if (input.contains("clear_board")) {
@@ -42,8 +42,8 @@ public class Main {
                     System.out.println("=" + nbCommands);
                     nbCommands++;
                 }
-                else if (input.contains("play")) {
 
+                else if (input.contains("play")) {
                     String color = input.split(" ")[1];
                     String command = input.split(" ")[2];
                     if (board.play(color,command)) {

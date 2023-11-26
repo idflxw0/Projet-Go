@@ -10,6 +10,8 @@ package Board;
 public class Board implements IBoard{
     private Stone[][] board; //board of the game
     private final int size; //size of the board
+    private int whiteCaptures;
+    private int blackCaptures;
 
     /**
      * Create a board of size x size
@@ -20,6 +22,8 @@ public class Board implements IBoard{
         if (size < 1 || size > 26) throw new IllegalMoveException("La taille du plateau doit etre comprise entre 1 et 26");
         board = new Stone[size][size]; //by default the size of the board is 19x19
         this.size = size;
+        whiteCaptures = 0;
+        blackCaptures = 0;
         initBoard();
     }
 
@@ -39,31 +43,43 @@ public class Board implements IBoard{
      */
     @Override
     public void showBoard() {
-       //HEADER
+        int msgL1 = size >= 10 ? 1 + (size - 10) : 1;
+        int msgL2 =  msgL1 - 1;
+
+        //HEADER
         System.out.print("   ");
         for (int i = 0; i < size; i++) {
-//            System.out.printf((char)('A' + i) + " ");
             System.out.printf("%c ",'A' + i);
         }
         System.out.println();
 
         //BODY
-        for (int i = 0; i < size; i++) {
+        for (int i = size-1; i >= 0; i--) {
             System.out.printf("%2d ", i + 1);
             for (int j = 0; j < size; j++) {
                 System.out.print(board[i][j] + " ");
             }
-            System.out.printf("%2d ", i + 1);
+            System.out.printf("%2d", i + 1);
+
+
+            if (i == msgL1) {
+                System.out.printf("     WHITE (O) has captured %d stones", whiteCaptures);
+            }
+            if (i == msgL2) {
+                System.out.printf("     BLACK (X) has captured %d stones", blackCaptures);
+            }
+
             System.out.println();
         }
 
         //FOOTER
         System.out.print("   ");
         for (int i = 0; i < size; i++) {
-            System.out.printf((char)('A' + i) + " ");
+            System.out.printf("%c ", 'A' + i);
         }
         System.out.println();
     }
+
 
     /**
      * Clear the board
