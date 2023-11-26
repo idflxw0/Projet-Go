@@ -32,18 +32,18 @@ public class Main {
                 }
             }
             else if (board != null ) {
-                if (input.contains("showboard")) {
+                if (input.equals("showboard")) {
                     System.out.println("=" + nbCommands);
                     board.showBoard();
                     nbCommands++;
                 }
-                else if (input.contains("clear_board")) {
+                else if (input.equals("clear_board")) {
                     board.clearBoard();
                     System.out.println("=" + nbCommands);
                     nbCommands++;
                 }
 
-                else if (input.contains("play")) {
+                else if (input.equals("play")) {
                     String color = input.split(" ")[1];
                     String command = input.split(" ")[2];
                     if (board.play(color,command)) {
