@@ -13,6 +13,7 @@ import GO.Players.White;
 import GO.Stone.Stone;
 
 public class Board implements IBoard{
+    static final int SUEIL = 10;
     private Stone[][] board; //board of the game
     private final int size; //size of the board
     private IPlayer white;
@@ -46,7 +47,7 @@ public class Board implements IBoard{
      */
     @Override
     public void showBoard() {
-        int msgL1 = size >= 10 ? 1 + (size - 10) : 1;
+        int msgL1 = size >= SUEIL ? 1 + (size - SUEIL) : 1;
         int msgL2 =  msgL1 - 1;
 
         //HEADER
