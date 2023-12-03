@@ -12,7 +12,7 @@ public class Main {
     private static final int MIN_SIZE = 2;
     private static final int MAX_SIZE = 26;
     private static final int DEFAULT_SIZE = 19;
-    private static final int COLOR_INDEX_WITHOUT_COMMAND_COUNT = 1;
+    private static final int INDEX_WITHOUT_COMMAND_COUNT = 1;
     private static final int COMMAND_INDEX_WITHOUT_COMMAND_COUNT = 2;
     private static final int COLOR_INDEX_WITH_COMMAND_COUNT = 2;
     private static final int COMMAND_INDEX_WITH_COMMAND_COUNT = 3;
@@ -76,21 +76,20 @@ public class Main {
 
     public static void useCommands(String input) {
         String[] inputArray = input.split(" ");
-        if (inputArray.length >= 1) {
-            if (board == null) {
-                board = new Board(DEFAULT_SIZE);
-            }
-
-            if (input.equals("showboard")) {
-                manageCommands("SUCCESS");
+        if (board == null) {
+            board = new Board(DEFAULT_SIZE);
+        }
+        else if (inputArray.length >= 1) {
+            if (!hasCommandCount && input.equals("showboard") || inputArray.length > 1 && inputArray[INDEX_WITHOUT_COMMAND_COUNT].equals("showboard")) {
+                manageCommands("SHOW_BOARD");
                 board.showBoard();
             }
             else if (input.equals("clear_board")) {
                 board.clearBoard();
                 manageCommands("SUCCESS");
             }
-            else if (input.contains("play") || inputArray.length > 1) {
-                int colorIndex = hasCommandCount ? COLOR_INDEX_WITH_COMMAND_COUNT : COLOR_INDEX_WITHOUT_COMMAND_COUNT;
+            else if (input.contains("play") || inputArray.length > 2) {
+                int colorIndex = hasCommandCount ? COLOR_INDEX_WITH_COMMAND_COUNT : INDEX_WITHOUT_COMMAND_COUNT;
                 int commandIndex = hasCommandCount ? COMMAND_INDEX_WITH_COMMAND_COUNT : COMMAND_INDEX_WITHOUT_COMMAND_COUNT;
                 if (inputArray.length > commandIndex) {
                     String color = inputArray[colorIndex];
@@ -116,6 +115,9 @@ public class Main {
                     System.out.println("=");
                 }
                 break;
+            case "SHOW_BOARD" :
+                System.out.println("=");
+                break;
             case "SIZE_ERROR" :
                 if (hasCommandCount)  {
                     System.out.println("?" + commandCount + "unacceptable size");
@@ -134,7 +136,7 @@ public class Main {
                 break;
             case "INCORRECT_PLAY" :
                 if (hasCommandCount) {
-                    System.out.println("?" + commandCount +" invalid color or coordinate");
+                   System.out.println("?" + commandCount +" invalid color or coordinate");
                 } else {
                     System.out.println("? invalid color or coordinate");
                 }
