@@ -1,4 +1,4 @@
-package GO.Stone;
+package GO.Board;
 
 public enum Stone {
     BLACK,

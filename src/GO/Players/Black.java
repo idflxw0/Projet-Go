@@ -19,8 +19,9 @@ public class Black implements IPlayer{
     }
 
     @Override
-    public void addCaptures() {
-        this.blackCaptures++;
+    public void addCaptures(int captures) {
+
+        this.blackCaptures += captures;
     }
 
     @Override

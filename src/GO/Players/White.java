@@ -21,8 +21,8 @@ public class White implements IPlayer{
     }
 
     @Override
-    public void addCaptures() {
-        this.whiteCaptures++;
+    public void addCaptures(int captures) {
+        this.whiteCaptures += captures;
     }
 
     @Override

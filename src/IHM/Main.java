@@ -7,7 +7,7 @@ import java.util.Scanner;
 
 public class Main {
     private static IBoard board = null;
-    private static  int commandCount = 0;
+    private static int commandCount = 0;
     private static boolean hasCommandCount;
     private static final int MIN_SIZE = 2;
     private static final int MAX_SIZE = 26;
@@ -36,7 +36,7 @@ public class Main {
             hasCommandCount = false;
         }
 
-        if ((hasCommandCount && input.equals("quit")) ||commands[0].equals("quit")) {
+        if ((hasCommandCount && input.equals("quit")) || commands[0].equals("quit")) {
             manageCommands("QUIT");
             return true;
         }
@@ -54,9 +54,9 @@ public class Main {
         if (inputArray.length > 1) {
             int size;
             try {
-                size = hasCommandCount ? Integer.parseInt(input.split(" ")[2]) : Integer.parseInt(input.split(" ")[1]);
+                size = hasCommandCount ? Integer.parseInt(inputArray[2]) : Integer.parseInt(inputArray[1]);
             } catch (IndexOutOfBoundsException e) {
-                System.out.println("?" + inputArray[0] + " boardsize not an integer");
+                manageCommands("NOT_INTEGER");
                 return;
             }
             if (size < MIN_SIZE || size > MAX_SIZE) {
@@ -66,11 +66,7 @@ public class Main {
                 manageCommands("SUCCESS");
             }
         } else {
-            if (hasCommandCount) {
-                System.out.println("?" + commandCount + " boardsize not an integer");
-            } else {
-                System.out.println("?" + " boardsize not an integer");
-            }
+            manageCommands("NOT_INTEGER");
         }
     }
 
@@ -79,16 +75,14 @@ public class Main {
         if (board == null) {
             board = new Board(DEFAULT_SIZE);
         }
-        else if (inputArray.length >= 1) {
+        if (inputArray.length >= 1) {
             if (!hasCommandCount && input.equals("showboard") || inputArray.length > 1 && inputArray[INDEX_WITHOUT_COMMAND_COUNT].equals("showboard")) {
                 manageCommands("SHOW_BOARD");
                 board.showBoard();
-            }
-            else if (input.equals("clear_board")) {
+            } else if (!hasCommandCount && input.equals("clear_board") ||(inputArray.length > 1 && inputArray[INDEX_WITHOUT_COMMAND_COUNT].equals("clear_board")) ) {
                 board.clearBoard();
                 manageCommands("SUCCESS");
-            }
-            else if (input.contains("play") || inputArray.length > 2) {
+            } else if (input.contains("play") && inputArray.length > 2) {
                 int colorIndex = hasCommandCount ? COLOR_INDEX_WITH_COMMAND_COUNT : INDEX_WITHOUT_COMMAND_COUNT;
                 int commandIndex = hasCommandCount ? COMMAND_INDEX_WITH_COMMAND_COUNT : COMMAND_INDEX_WITHOUT_COMMAND_COUNT;
                 if (inputArray.length > commandIndex) {
@@ -96,61 +90,59 @@ public class Main {
                     String command = inputArray[commandIndex];
                     String playedSituation = board.play(color, command);
                     manageCommands(playedSituation);
-                }
-                else manageCommands("INCORRECT_PLAY");
+                } else manageCommands("INCORRECT_PLAY");
 
-            }
-            else manageCommands("UNKNOWN_COMMAND");
+            } else manageCommands("UNKNOWN_COMMAND");
 
         } else manageCommands("");
     }
 
     public static void manageCommands(String event) {
         switch (event) {
-            case "SUCCESS" , "QUIT":
-                if (hasCommandCount)  {
+            case "SUCCESS", "QUIT" -> {
+                if (hasCommandCount) {
                     System.out.println("=" + commandCount);
-                }
-                else {
+                } else {
                     System.out.println("=");
                 }
-                break;
-            case "SHOW_BOARD" :
-                System.out.println("=");
-                break;
-            case "SIZE_ERROR" :
-                if (hasCommandCount)  {
-                    System.out.println("?" + commandCount + "unacceptable size");
-                }
-                else {
+            }
+            case "SHOW_BOARD" -> System.out.println("=");
+            case "SIZE_ERROR" -> {
+                if (hasCommandCount) {
+                    System.out.println("?" + commandCount + " unacceptable size");
+                } else {
                     System.out.println("? unacceptable size");
                 }
-                break;
-            case "UNKNOWN_COMMAND" :
+            }
+            case "NOT_INTEGER" -> {
+                if (hasCommandCount) {
+                    System.out.println("?" + commandCount + " boardsize not an integer");
+                } else {
+                    System.out.println("?" + " boardsize not an integer");
+                }
+            }
+            case "UNKNOWN_COMMAND" -> {
                 if (hasCommandCount) {
                     System.out.println("?" + commandCount + " unknown command");
                 } else {
                     System.out.println("? unknown command");
                 }
-
-                break;
-            case "INCORRECT_PLAY" :
+            }
+            case "INCORRECT_PLAY" -> {
                 if (hasCommandCount) {
-                   System.out.println("?" + commandCount +" invalid color or coordinate");
+                    System.out.println("?" + commandCount + " invalid color or coordinate");
                 } else {
                     System.out.println("? invalid color or coordinate");
                 }
-                break;
-            case "ILLEGAL_MOVE" :
+            }
+            case "ILLEGAL_MOVE" -> {
                 if (hasCommandCount) {
-                    System.out.println("?" + commandCount +" illegal move");
+                    System.out.println("?" + commandCount + " illegal move");
                 } else {
                     System.out.println("? illegal move");
                 }
-                break;
-            default:
-                System.out.println("?" + commandCount);
-                break;
+            }
+            default -> System.out.println("?" + commandCount);
         }
     }
 }
