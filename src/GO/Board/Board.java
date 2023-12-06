@@ -10,6 +10,7 @@ package GO.Board;
 import GO.Players.Black;
 import GO.Players.IPlayer;
 import GO.Players.White;
+import IHM.Constants;
 
 public class Board implements IBoard {
     private static final int SEUIL = 10;
@@ -28,6 +29,7 @@ public class Board implements IBoard {
         this.size = size;
         white = new White();
         black = new Black();
+
         initBoard();
     }
 
@@ -135,5 +137,22 @@ public class Board implements IBoard {
 
     public void floodFill(int row, int column, String color) {
 
+    }
+    private void floodFill(int[][] matrix, int row, int col, int targetColor, int replacementColor) {
+        if (row < 0 || row >= 8 || col < 0 || col >= 8 || matrix[row][col] != targetColor) {
+            return;
+        }
+
+        matrix[row][col] = replacementColor;
+
+        // Perform flood fill in all eight directions
+        floodFill(matrix, row - 1, col, targetColor, replacementColor); // Up
+        floodFill(matrix, row + 1, col, targetColor, replacementColor); // Down
+        floodFill(matrix, row, col - 1, targetColor, replacementColor); // Left
+        floodFill(matrix, row, col + 1, targetColor, replacementColor); // Right
+        floodFill(matrix, row - 1, col - 1, targetColor, replacementColor); // Up-Left
+        floodFill(matrix, row - 1, col + 1, targetColor, replacementColor); // Up-Right
+        floodFill(matrix, row + 1, col - 1, targetColor, replacementColor); // Down-Left
+        floodFill(matrix, row + 1, col + 1, targetColor, replacementColor); // Down-Right
     }
 }

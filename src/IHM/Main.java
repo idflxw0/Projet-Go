@@ -9,13 +9,6 @@ public class Main {
     private static IBoard board = null;
     private static int commandCount = 0;
     private static boolean hasCommandCount;
-    private static final int MIN_SIZE = 2;
-    private static final int MAX_SIZE = 26;
-    private static final int DEFAULT_SIZE = 19;
-    private static final int INDEX_WITHOUT_COMMAND_COUNT = 1;
-    private static final int COMMAND_INDEX_WITHOUT_COMMAND_COUNT = 2;
-    private static final int COLOR_INDEX_WITH_COMMAND_COUNT = 2;
-    private static final int COMMAND_INDEX_WITH_COMMAND_COUNT = 3;
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
@@ -51,15 +44,17 @@ public class Main {
 
     public static void initBoard(String input) {
         String[] inputArray = input.split(" ");
-        if (inputArray.length > 1) {
+        if (inputArray.length > Constants.CORRECT_ARRAY_LENGTH) {
             int size;
             try {
-                size = hasCommandCount ? Integer.parseInt(inputArray[2]) : Integer.parseInt(inputArray[1]);
+                size = hasCommandCount ? Integer.parseInt(inputArray[Constants.INDEX_WITH_COMMAND_COUNT])
+                        : Integer.parseInt(inputArray[Constants.INDEX_WITHOUT_COMMAND_COUNT]);
+
             } catch (IndexOutOfBoundsException e) {
                 manageCommands("NOT_INTEGER");
                 return;
             }
-            if (size < MIN_SIZE || size > MAX_SIZE) {
+            if (size < Constants.BOARD_MIN_SIZE || size > Constants.BOARD_MAX_SIZE) {
                 manageCommands("SIZE_ERROR");
             } else {
                 board = new Board(size);
@@ -72,29 +67,50 @@ public class Main {
 
     public static void useCommands(String input) {
         String[] inputArray = input.split(" ");
+        boolean correct_length = inputArray.length > Constants.CORRECT_ARRAY_LENGTH;
         if (board == null) {
-            board = new Board(DEFAULT_SIZE);
+            board = new Board(Constants.BOARD_DEFAULT_SIZE);
         }
-        if (inputArray.length >= 1) {
-            if (!hasCommandCount && input.equals("showboard") || inputArray.length > 1 && inputArray[INDEX_WITHOUT_COMMAND_COUNT].equals("showboard")) {
+        if (inputArray.length >= Constants.CORRECT_ARRAY_LENGTH) {
+            if (!hasCommandCount && input.equals("showboard")
+                    || correct_length && inputArray[Constants.INDEX_WITHOUT_COMMAND_COUNT].equals("showboard"))
+            {
                 manageCommands("SHOW_BOARD");
                 board.showBoard();
-            } else if (!hasCommandCount && input.equals("clear_board") ||(inputArray.length > 1 && inputArray[INDEX_WITHOUT_COMMAND_COUNT].equals("clear_board")) ) {
+            }
+            else if (!hasCommandCount && input.equals("clear_board")
+                    ||(correct_length && inputArray[Constants.INDEX_WITHOUT_COMMAND_COUNT].equals("clear_board")) )
+            {
                 board.clearBoard();
                 manageCommands("SUCCESS");
-            } else if (input.contains("play") && inputArray.length > 2) {
-                int colorIndex = hasCommandCount ? COLOR_INDEX_WITH_COMMAND_COUNT : INDEX_WITHOUT_COMMAND_COUNT;
-                int commandIndex = hasCommandCount ? COMMAND_INDEX_WITH_COMMAND_COUNT : COMMAND_INDEX_WITHOUT_COMMAND_COUNT;
-                if (inputArray.length > commandIndex) {
-                    String color = inputArray[colorIndex];
-                    String command = inputArray[commandIndex];
-                    String playedSituation = board.play(color, command);
-                    manageCommands(playedSituation);
-                } else manageCommands("INCORRECT_PLAY");
-
-            } else manageCommands("UNKNOWN_COMMAND");
+            }
+            else if (input.contains("play") && inputArray.length > Constants.CORRECT_PLAY_ARRAY_LENGTH) {
+               play(inputArray);
+            }
+            else manageCommands("UNKNOWN_COMMAND");
 
         } else manageCommands("");
+    }
+
+    /**
+     * Play : let us place a stone on the board with the color and the position
+     * @param inputArray : input array of the command
+     */
+    private static void play(String[] inputArray) {
+        int colorIndex = hasCommandCount ?
+                Constants.COLOR_INDEX_WITH_COMMAND_COUNT : Constants.INDEX_WITHOUT_COMMAND_COUNT;
+        int commandIndex = hasCommandCount ?
+                Constants.COMMAND_INDEX_WITH_COMMAND_COUNT : Constants.PLAY_COMMAND_INDEX_WITHOUT_COMMAND_COUNT;
+
+        if (inputArray.length > commandIndex) {
+            String color = inputArray[colorIndex];
+            String command = inputArray[commandIndex];
+
+            String playedSituation = board.play(color, command);
+
+            manageCommands(playedSituation);
+
+        } else manageCommands("INCORRECT_PLAY");
     }
 
     public static void manageCommands(String event) {

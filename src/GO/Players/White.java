@@ -1,32 +1,11 @@
 package GO.Players;
 
-public class White implements IPlayer{
-    private int whiteCaptures;
-    private boolean hasPlayed;
-
+public class White extends Player{
     public White() {
-        whiteCaptures = 0;
-        hasPlayed = false;
+        super();
     }
-
-
-    @Override
-    public boolean isPlaying(boolean situation) {
-        return hasPlayed;
-    }
-
-    @Override
-    public boolean getSituation() {
-        return this.hasPlayed;
-    }
-
     @Override
     public void addCaptures(int captures) {
-        this.whiteCaptures += captures;
-    }
-
-    @Override
-    public int getCaptures() {
-        return this.whiteCaptures;
+        this.captures += captures;
     }
 }
