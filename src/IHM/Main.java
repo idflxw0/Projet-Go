@@ -36,7 +36,7 @@ public class Main {
             hasCommandCount = false;
         }
 
-        if ((hasCommandCount && input.equals("quit")) || commands[0].equals("quit")) {
+        if ((!hasCommandCount && input.equals("quit"))|| hasCommandCount && commands[1].equals("quit") ) {
             manageCommands("QUIT");
             return true;
         }
