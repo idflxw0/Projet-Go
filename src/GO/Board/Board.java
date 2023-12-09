@@ -116,6 +116,15 @@ public class Board implements IBoard {
         this.initBoard();
     }
 
+
+    /**
+     * Play a stone on the board
+     * @param color : color of the stone
+     * @param pos : positions of the stone including the column and the row
+     * @return : SUCCESS if the stone is placed,
+     *           INCORRECT_PLAY if the position is incorrect,
+     *           ILLEGAL_MOVE if the move is illegal
+     */
     @Override
     public String play(String color, String pos) {
         if (!color.equals("black") && !color.equals("white")) return "INCORRECT_PLAY";
@@ -144,6 +153,13 @@ public class Board implements IBoard {
         return placeStones(row, column, type) ? "SUCCESS" : "ILLEGAL_MOVE";
     }
 
+    /**
+     * Place a stone on the board
+     * @param x : row of the stone
+     * @param y : column of the stone
+     * @param color : color of the stone
+     * @return : true if the stone is placed, false otherwise
+     */
     private boolean placeStones(int x, char y, Stone color) {
         int columnIndex = y - 'A';
         int rowIndex = x - 1;
@@ -169,7 +185,6 @@ public class Board implements IBoard {
 
         // Check if the placed stone is in atari (has no liberties)
         if (countLiberties(getGroup(new Point(rowIndex, columnIndex), color)) == 0) {
-
             board[rowIndex][columnIndex] = Stone.EMPTY; // Remove the placed stone
             return false;
         }
@@ -177,10 +192,24 @@ public class Board implements IBoard {
         return true;
     }
 
+    /**
+     * Check if a stone can be placed on the board
+     * @param row : row of the stone
+     * @param column : column of the stone
+     * @return : true if the stone can be placed, false otherwise
+     */
     public boolean isPlaceable(int row, int column) {
         return this.board[row][column] == Stone.EMPTY;
     }
 
+
+    /**
+     * Check adjacent points
+     * @param p : point to check
+     * @param color : color of the stone
+     * @param friendGroups : list of friend groups
+     * @param enemyGroups : list of enemy groups
+     */
     private void checkAdjacent(Point p,Stone color, List<Set<Point>> friendGroups, List<Set<Point>> enemyGroups) {
         if (board[p.x][p.y] == color) {
             friendGroups.add(getGroup(p, color));
@@ -188,12 +217,25 @@ public class Board implements IBoard {
             enemyGroups.add(getGroup(p, board[p.x][p.y]));
         }
     }
+
+    /**
+     * Get the group of stones
+     * @param p : point to check
+     * @param color : color of the stone
+     * @return : the group of stones
+     */
     private Set<Point> getGroup(Point p, Stone color) {
         Set<Point> group = new HashSet<>();
         exploreGroup(p, color, group);
         return group;
     }
 
+    /**
+     * Explore the group of stones
+     * @param p : point to check
+     * @param color : color of the stone
+     * @param group : group of stones
+     */
     private void exploreGroup(Point p, Stone color, Set<Point> group) {
         if (p.x < 0 || p.y < 0 || p.x >= size || p.y >= size || board[p.x][p.y] != color || group.contains(p)) {
             return;
@@ -207,6 +249,12 @@ public class Board implements IBoard {
         exploreGroup(new Point(p.x, p.y+1), color, group);
     }
 
+
+    /**
+     * Count the liberties of a group of stones
+     * @param group : group of stones
+     * @return : the number of liberties
+     */
     private int countLiberties(Set<Point> group) {
         Set<Point> liberties = new HashSet<>();
         for (Point p : group) {
@@ -218,12 +266,21 @@ public class Board implements IBoard {
         return liberties.size();
     }
 
+    /**
+     * Add a liberty to a group of stones
+     * @param liberties : liberties of the group
+     * @param p : point to check
+     */
     private void addLiberty(Set<Point> liberties, Point p) {
         if (p.x >= 0 && p.y >= 0 && p.x < size && p.y < size && board[p.x][p.y] == Stone.EMPTY) {
             liberties.add(p);
         }
     }
 
+    /**
+     * Remove a group of stones
+     * @param group : group of stones
+     */
     private void removeGroup(Set<Point> group) {
         for (Point p : group) {
             if (board[p.x][p.y] == Stone.BLACK) white.addCaptures(1);
@@ -231,5 +288,4 @@ public class Board implements IBoard {
             board[p.x][p.y] = Stone.EMPTY;
         }
     }
-
 }
