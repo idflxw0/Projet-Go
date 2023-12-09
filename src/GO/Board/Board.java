@@ -7,9 +7,8 @@
  */
 package GO.Board;
 
-import GO.Players.Black;
 import GO.Players.IPlayer;
-import GO.Players.White;
+import GO.Players.Player;
 
 import java.util.*;
 
@@ -17,44 +16,20 @@ public class Board implements IBoard {
     private static final int SEUIL = 10;
     private Stone[][] board; //board of the game
     private final int size; //size of the board
-    private IPlayer white;
-    private IPlayer black;
+    private IPlayer white; //white player
+    private IPlayer black; //black player
 
     /**
      * Create a board of size x size
-     *
      * @param size size of the board
      */
     public Board(int size) {
         this.board = new Stone[size][size];
         this.size = size;
-        this.white = new White();
-        this.black = new Black();
+        this.white = new Player();
+        this.black = new Player();
         initBoard();
     }
-
-    private class Point {
-        int x, y;
-
-        Point(int x, int y) {
-            this.x = x;
-            this.y = y;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            Point point = (Point) o;
-            return x == point.x && y == point.y;
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(x, y);
-        }
-    }
-
 
     /**
      * Initialise the board
@@ -65,47 +40,6 @@ public class Board implements IBoard {
                 board[i][j] = Stone.EMPTY;
             }
         }
-    }
-
-    /**
-     * Show the board
-     */
-    @Override
-    public void showBoard() {
-        int msgL1 = size >= SEUIL ? 1 + (size - SEUIL) : 1;
-        int msgL2 = msgL1 - 1;
-
-        //HEADER
-        System.out.print("   ");
-        for (int i = 0; i < size; i++) {
-            System.out.printf("%c ", 'A' + i);
-        }
-        System.out.println();
-
-        //BODY
-        for (int i = size - 1; i >= 0; i--) {
-            System.out.printf("%2d ", i + 1);
-            for (int j = 0; j < size; j++) {
-                System.out.print(board[i][j] + " ");
-            }
-            System.out.printf("%2d", i + 1);
-
-
-            if (i == msgL1) {
-                System.out.printf("     WHITE (O) has captured %d stones", white.getCaptures());
-            }
-            if (i == msgL2) {
-                System.out.printf("     BLACK (X) has captured %d stones", black.getCaptures());
-            }
-            System.out.println();
-        }
-
-        //FOOTER
-        System.out.print("   ");
-        for (int i = 0; i < size; i++) {
-            System.out.printf("%c ", 'A' + i);
-        }
-        System.out.println();
     }
 
     /**
@@ -163,32 +97,32 @@ public class Board implements IBoard {
     private boolean placeStones(int x, char y, Stone color) {
         int columnIndex = y - 'A';
         int rowIndex = x - 1;
-        if (!isPlaceable(rowIndex,columnIndex)) return false;
+        if (!isPlaceable(rowIndex, columnIndex)) return false;
 
         board[rowIndex][columnIndex] = color;
 
-        List<Set<Point>> friendGroups = new ArrayList<>();
-        List<Set<Point>> enemyGroups = new ArrayList<>();
-        Stone enemyColor = (color == Stone.BLACK) ? Stone.WHITE : Stone.BLACK;
+        List<Set<String>> friendGroups = new ArrayList<>(); // List of friend groups
+        List<Set<String>> enemyGroups = new ArrayList<>(); // List of enemy groups
 
-        if (rowIndex > 0) checkAdjacent(new Point(rowIndex - 1,columnIndex),color,friendGroups,enemyGroups);
-        if (columnIndex > 0) checkAdjacent(new Point(rowIndex, columnIndex-1), color, friendGroups, enemyGroups);
-        if (rowIndex < size - 1) checkAdjacent(new Point(rowIndex+1, columnIndex), color, friendGroups, enemyGroups);
-        if (columnIndex < size - 1) checkAdjacent(new Point(rowIndex, columnIndex+1), color, friendGroups, enemyGroups);
+        // Check adjacent points using row and column indices
+        if (rowIndex > 0) checkAdjacent(rowIndex - 1, columnIndex, color, friendGroups, enemyGroups); // Check the point above
+        if (columnIndex > 0) checkAdjacent(rowIndex, columnIndex - 1, color, friendGroups, enemyGroups); // Check the point to the left
+        if (rowIndex < size - 1) checkAdjacent(rowIndex + 1, columnIndex, color, friendGroups, enemyGroups); // Check the point below
+        if (columnIndex < size - 1) checkAdjacent(rowIndex, columnIndex + 1, color, friendGroups, enemyGroups); // Check the point to the right
 
         // Check for captures
-        for (Set<Point> group : enemyGroups) {
+        for (Set<String> group : enemyGroups) {
             if (countLiberties(group) == 0) {
                 removeGroup(group);
             }
         }
 
         // Check if the placed stone is in atari (has no liberties)
-        if (countLiberties(getGroup(new Point(rowIndex, columnIndex), color)) == 0) {
+        if (countLiberties(getGroup(rowIndex, columnIndex, color)) == 0) {
+            manageCaptures(rowIndex, columnIndex);
             board[rowIndex][columnIndex] = Stone.EMPTY; // Remove the placed stone
             return false;
         }
-        showBoard();
         return true;
     }
 
@@ -202,66 +136,68 @@ public class Board implements IBoard {
         return this.board[row][column] == Stone.EMPTY;
     }
 
-
     /**
      * Check adjacent points
-     * @param p : point to check
      * @param color : color of the stone
      * @param friendGroups : list of friend groups
      * @param enemyGroups : list of enemy groups
      */
-    private void checkAdjacent(Point p,Stone color, List<Set<Point>> friendGroups, List<Set<Point>> enemyGroups) {
-        if (board[p.x][p.y] == color) {
-            friendGroups.add(getGroup(p, color));
-        } else if (board[p.x][p.y] != Stone.EMPTY) {
-            enemyGroups.add(getGroup(p, board[p.x][p.y]));
+    private void checkAdjacent(int x, int y, Stone color, List<Set<String>> friendGroups, List<Set<String>> enemyGroups) {
+        if (board[x][y] == color) {
+            friendGroups.add(getGroup(x, y, color));
+        } else if (board[x][y] != Stone.EMPTY) {
+            enemyGroups.add(getGroup(x, y, board[x][y]));
         }
     }
 
     /**
      * Get the group of stones
-     * @param p : point to check
+     * @param x : row of the stone
+     * @param y : column of the stone
      * @param color : color of the stone
      * @return : the group of stones
      */
-    private Set<Point> getGroup(Point p, Stone color) {
-        Set<Point> group = new HashSet<>();
-        exploreGroup(p, color, group);
+    private Set<String> getGroup(int x, int y, Stone color) {
+        Set<String> group = new HashSet<>();
+        exploreGroup(x, y, color, group);
         return group;
     }
 
     /**
      * Explore the group of stones
-     * @param p : point to check
+     * @param x : row of the stone
+     * @param y : column of the stone
      * @param color : color of the stone
      * @param group : group of stones
      */
-    private void exploreGroup(Point p, Stone color, Set<Point> group) {
-        if (p.x < 0 || p.y < 0 || p.x >= size || p.y >= size || board[p.x][p.y] != color || group.contains(p)) {
+    private void exploreGroup(int x, int y, Stone color, Set<String> group) {
+        String pos = x + "," + y;
+        if (x < 0 || y < 0 || x >= size || y >= size || board[x][y] != color || group.contains(pos)) {
             return;
         }
 
-        group.add(p);
-
-        exploreGroup(new Point(p.x-1, p.y), color, group);
-        exploreGroup(new Point(p.x+1, p.y), color, group);
-        exploreGroup(new Point(p.x, p.y-1), color, group);
-        exploreGroup(new Point(p.x, p.y+1), color, group);
+        group.add(pos);
+        exploreGroup(x - 1, y, color, group);
+        exploreGroup(x + 1, y, color, group);
+        exploreGroup(x, y - 1, color, group);
+        exploreGroup(x, y + 1, color, group);
     }
-
 
     /**
      * Count the liberties of a group of stones
      * @param group : group of stones
      * @return : the number of liberties
      */
-    private int countLiberties(Set<Point> group) {
-        Set<Point> liberties = new HashSet<>();
-        for (Point p : group) {
-            addLiberty(liberties, new Point(p.x-1, p.y));
-            addLiberty(liberties, new Point(p.x+1, p.y));
-            addLiberty(liberties, new Point(p.x, p.y-1));
-            addLiberty(liberties, new Point(p.x, p.y+1));
+    private int countLiberties(Set<String> group) {
+        Set<String> liberties = new HashSet<>();
+        for (String pos : group) {
+            String[] parts = pos.split(",");
+            int x = Integer.parseInt(parts[0]);
+            int y = Integer.parseInt(parts[1]);
+            addLiberty(liberties, x - 1, y);
+            addLiberty(liberties, x + 1, y);
+            addLiberty(liberties, x, y - 1);
+            addLiberty(liberties, x, y + 1);
         }
         return liberties.size();
     }
@@ -269,11 +205,13 @@ public class Board implements IBoard {
     /**
      * Add a liberty to a group of stones
      * @param liberties : liberties of the group
-     * @param p : point to check
+     * @param x : row of the stone
+     * @param y : column of the stone
      */
-    private void addLiberty(Set<Point> liberties, Point p) {
-        if (p.x >= 0 && p.y >= 0 && p.x < size && p.y < size && board[p.x][p.y] == Stone.EMPTY) {
-            liberties.add(p);
+    private void addLiberty(Set<String> liberties, int x, int y) {
+        String pos = x + "," + y;
+        if (x >= 0 && y >= 0 && x < size && y < size && board[x][y] == Stone.EMPTY) {
+            liberties.add(pos);
         }
     }
 
@@ -281,11 +219,65 @@ public class Board implements IBoard {
      * Remove a group of stones
      * @param group : group of stones
      */
-    private void removeGroup(Set<Point> group) {
-        for (Point p : group) {
-            if (board[p.x][p.y] == Stone.BLACK) white.addCaptures(1);
-            else white.addCaptures(1);
-            board[p.x][p.y] = Stone.EMPTY;
+    private void removeGroup(Set<String> group) {
+        for (String pos : group) {
+            String[] parts = pos.split(",");
+            int x = Integer.parseInt(parts[0]);
+            int y = Integer.parseInt(parts[1]);
+            manageCaptures(x, y);
+            board[x][y] = Stone.EMPTY;
         }
+    }
+
+    /**
+     * Manage the captures
+     * @param x : row of the stone
+     * @param y : column of the stone
+     */
+    private void manageCaptures(int x, int y) {
+        if (board[x][y] == Stone.BLACK) white.addCaptures(1);
+            else black.addCaptures(1);
+    }
+
+
+    /**
+     * Show the board
+     */
+    @Override
+    public void showBoard() {
+        int msgL1 = size >= SEUIL ? 1 + (size - SEUIL) : 1;
+        int msgL2 = msgL1 - 1;
+
+        //HEADER
+        System.out.print("   ");
+        for (int i = 0; i < size; i++) {
+            System.out.printf("%c ", 'A' + i);
+        }
+        System.out.println();
+
+        //BODY
+        for (int i = size - 1; i >= 0; i--) {
+            System.out.printf("%2d ", i + 1);
+            for (int j = 0; j < size; j++) {
+                System.out.print(board[i][j] + " ");
+            }
+            System.out.printf("%2d", i + 1);
+
+
+            if (i == msgL1) {
+                System.out.printf("     WHITE (O) has captured %d stones", white.getCaptures());
+            }
+            if (i == msgL2) {
+                System.out.printf("     BLACK (X) has captured %d stones", black.getCaptures());
+            }
+            System.out.println();
+        }
+
+        //FOOTER
+        System.out.print("   ");
+        for (int i = 0; i < size; i++) {
+            System.out.printf("%c ", 'A' + i);
+        }
+        System.out.println();
     }
 }

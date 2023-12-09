@@ -6,9 +6,9 @@ import GO.Board.IBoard;
 import java.util.Scanner;
 
 public class Main {
-    private static IBoard board = null;
-    private static int commandCount = 0;
-    private static boolean hasCommandCount;
+    private static IBoard board = null; //board of the game
+    private static int commandCount = 0; //number of commands
+    private static boolean hasCommandCount; //true if the command has a command number, false otherwise
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
@@ -19,6 +19,11 @@ public class Main {
         scanner.close();
     }
 
+    /**
+     * Process the input
+     * @param input : input of the user
+     * @return : true if the input is quit, false otherwise
+     */
     private static boolean processInput(String input) {
         String[] commands = input.split(" ");
 
@@ -42,6 +47,10 @@ public class Main {
         return false;
     }
 
+    /**
+     * Initialize the board
+     * @param input : input of the user
+     */
     public static void initBoard(String input) {
         String[] inputArray = input.split(" ");
         if (inputArray.length > Constants.CORRECT_ARRAY_LENGTH) {
@@ -65,6 +74,10 @@ public class Main {
         }
     }
 
+    /**
+     * Use the commands
+     * @param input : input of the user
+     */
     public static void useCommands(String input) {
         String[] inputArray = input.split(" ");
         boolean correct_length = inputArray.length > Constants.CORRECT_ARRAY_LENGTH;
@@ -113,6 +126,10 @@ public class Main {
         } else manageCommands("INCORRECT_PLAY");
     }
 
+    /**
+     * Manage the commands
+     * @param event : event of the command
+     */
     public static void manageCommands(String event) {
         switch (event) {
             case "SUCCESS", "QUIT" -> {

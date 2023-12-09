@@ -1,15 +1,24 @@
 1 boardsize 12
-12 play black C3
-13 play black D3
-2 play white B2
-3 play white B3
-4 play white B4
-5 play white C2
-6 play white C4
-7 play white D2
-8 play white D4
-9 play white E2
-10 play white E3
-11 play white E4
-14 showboard
-15 quit
+2 play black C3
+3 play black D3
+4 play black E3
+5 play black C2
+6 play black D2
+7 play black E2
+8 play white B1
+9 play white B2
+10 play white B3
+11 play white B4
+12 play white C1
+13 play white C4
+14 play white D1
+15 play white D4
+16 play white E1
+17 play white E4
+18 play white F1
+19 play white F2
+20 play white F3
+21 play white F4
+21 play white F4
+22 showboard
+23 quit
