@@ -103,7 +103,6 @@ public class Board implements IBoard {
 
         List<Set<String>> friendGroups = new ArrayList<>(); // List of friend groups
         List<Set<String>> enemyGroups = new ArrayList<>(); // List of enemy groups
-
         // Check adjacent points using row and column indices
         if (rowIndex > 0) checkAdjacent(rowIndex - 1, columnIndex, color, friendGroups, enemyGroups); // Check the point above
         if (columnIndex > 0) checkAdjacent(rowIndex, columnIndex - 1, color, friendGroups, enemyGroups); // Check the point to the left
@@ -133,6 +132,7 @@ public class Board implements IBoard {
      * @return : true if the stone can be placed, false otherwise
      */
     public boolean isPlaceable(int row, int column) {
+        if (row < 0 || column < 0 || row >= size || column >= size) return false;
         return this.board[row][column] == Stone.EMPTY;
     }
 
