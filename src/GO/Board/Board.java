@@ -10,7 +10,8 @@ package GO.Board;
 import GO.Players.Black;
 import GO.Players.IPlayer;
 import GO.Players.White;
-import IHM.Constants;
+
+import java.util.*;
 
 public class Board implements IBoard {
     private static final int SEUIL = 10;
@@ -25,13 +26,35 @@ public class Board implements IBoard {
      * @param size size of the board
      */
     public Board(int size) {
-        board = new Stone[size][size];
+        this.board = new Stone[size][size];
         this.size = size;
-        white = new White();
-        black = new Black();
-
+        this.white = new White();
+        this.black = new Black();
         initBoard();
     }
+
+    private class Point {
+        int x, y;
+
+        Point(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Point point = (Point) o;
+            return x == point.x && y == point.y;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(x, y);
+        }
+    }
+
 
     /**
      * Initialise the board
@@ -121,38 +144,92 @@ public class Board implements IBoard {
         return placeStones(row, column, type) ? "SUCCESS" : "ILLEGAL_MOVE";
     }
 
-    private boolean placeStones(int row, char column, Stone color) {
-        int columnIndex = column - 'A';
-        int rowIndex = row - 1;
-        if (isPlaceable(rowIndex, columnIndex)) {
-            this.board[rowIndex][columnIndex] = color == Stone.WHITE ? Stone.WHITE : Stone.BLACK;
-            return true;
+    private boolean placeStones(int x, char y, Stone color) {
+        int columnIndex = y - 'A';
+        int rowIndex = x - 1;
+        if (!isPlaceable(rowIndex,columnIndex)) return false;
+
+        board[rowIndex][columnIndex] = color;
+
+        List<Set<Point>> friendGroups = new ArrayList<>();
+        List<Set<Point>> enemyGroups = new ArrayList<>();
+        Stone enemyColor = (color == Stone.BLACK) ? Stone.WHITE : Stone.BLACK;
+
+        if (rowIndex > 0) checkAdjacent(new Point(rowIndex - 1,columnIndex),color,friendGroups,enemyGroups);
+        if (columnIndex > 0) checkAdjacent(new Point(rowIndex, columnIndex-1), color, friendGroups, enemyGroups);
+        if (rowIndex < size - 1) checkAdjacent(new Point(rowIndex+1, columnIndex), color, friendGroups, enemyGroups);
+        if (columnIndex < size - 1) checkAdjacent(new Point(rowIndex, columnIndex+1), color, friendGroups, enemyGroups);
+
+        // Check for captures
+        for (Set<Point> group : enemyGroups) {
+            if (countLiberties(group) == 0) {
+                removeGroup(group);
+            }
         }
-        return false;
+
+        // Check if the placed stone is in atari (has no liberties)
+        if (countLiberties(getGroup(new Point(rowIndex, columnIndex), color)) == 0) {
+
+            board[rowIndex][columnIndex] = Stone.EMPTY; // Remove the placed stone
+            return false;
+        }
+        showBoard();
+        return true;
     }
 
     public boolean isPlaceable(int row, int column) {
         return this.board[row][column] == Stone.EMPTY;
     }
 
-    public void floodFill(int row, int column, String color) {
-
+    private void checkAdjacent(Point p,Stone color, List<Set<Point>> friendGroups, List<Set<Point>> enemyGroups) {
+        if (board[p.x][p.y] == color) {
+            friendGroups.add(getGroup(p, color));
+        } else if (board[p.x][p.y] != Stone.EMPTY) {
+            enemyGroups.add(getGroup(p, board[p.x][p.y]));
+        }
     }
-    private void floodFill(int[][] matrix, int row, int col, int targetColor, int replacementColor) {
-        if (row < 0 || row >= 8 || col < 0 || col >= 8 || matrix[row][col] != targetColor) {
+    private Set<Point> getGroup(Point p, Stone color) {
+        Set<Point> group = new HashSet<>();
+        exploreGroup(p, color, group);
+        return group;
+    }
+
+    private void exploreGroup(Point p, Stone color, Set<Point> group) {
+        if (p.x < 0 || p.y < 0 || p.x >= size || p.y >= size || board[p.x][p.y] != color || group.contains(p)) {
             return;
         }
 
-        matrix[row][col] = replacementColor;
+        group.add(p);
 
-        // Perform flood fill in all eight directions
-        floodFill(matrix, row - 1, col, targetColor, replacementColor); // Up
-        floodFill(matrix, row + 1, col, targetColor, replacementColor); // Down
-        floodFill(matrix, row, col - 1, targetColor, replacementColor); // Left
-        floodFill(matrix, row, col + 1, targetColor, replacementColor); // Right
-        floodFill(matrix, row - 1, col - 1, targetColor, replacementColor); // Up-Left
-        floodFill(matrix, row - 1, col + 1, targetColor, replacementColor); // Up-Right
-        floodFill(matrix, row + 1, col - 1, targetColor, replacementColor); // Down-Left
-        floodFill(matrix, row + 1, col + 1, targetColor, replacementColor); // Down-Right
+        exploreGroup(new Point(p.x-1, p.y), color, group);
+        exploreGroup(new Point(p.x+1, p.y), color, group);
+        exploreGroup(new Point(p.x, p.y-1), color, group);
+        exploreGroup(new Point(p.x, p.y+1), color, group);
     }
+
+    private int countLiberties(Set<Point> group) {
+        Set<Point> liberties = new HashSet<>();
+        for (Point p : group) {
+            addLiberty(liberties, new Point(p.x-1, p.y));
+            addLiberty(liberties, new Point(p.x+1, p.y));
+            addLiberty(liberties, new Point(p.x, p.y-1));
+            addLiberty(liberties, new Point(p.x, p.y+1));
+        }
+        return liberties.size();
+    }
+
+    private void addLiberty(Set<Point> liberties, Point p) {
+        if (p.x >= 0 && p.y >= 0 && p.x < size && p.y < size && board[p.x][p.y] == Stone.EMPTY) {
+            liberties.add(p);
+        }
+    }
+
+    private void removeGroup(Set<Point> group) {
+        for (Point p : group) {
+            if (board[p.x][p.y] == Stone.BLACK) white.addCaptures(1);
+            else white.addCaptures(1);
+            board[p.x][p.y] = Stone.EMPTY;
+        }
+    }
+
 }

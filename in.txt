@@ -1,9 +1,15 @@
-boardsize 12
-play white B3
-play white C2
-play white D3
-play white C4
-play black C3
-play black C5
-showboard
-quit
+1 boardsize 12
+12 play black C3
+13 play black D3
+2 play white B2
+3 play white B3
+4 play white B4
+5 play white C2
+6 play white C4
+7 play white D2
+8 play white D4
+9 play white E2
+10 play white E3
+11 play white E4
+14 showboard
+15 quit
