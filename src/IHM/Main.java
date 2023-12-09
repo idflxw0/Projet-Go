@@ -97,7 +97,7 @@ public class Main {
                 board.clearBoard();
                 manageCommands("SUCCESS");
             }
-            else if (input.contains("play") && inputArray.length > Constants.CORRECT_PLAY_ARRAY_LENGTH) {
+            else if (input.contains("play") || inputArray.length > Constants.CORRECT_PLAY_ARRAY_LENGTH) {
                play(inputArray);
             }
             else manageCommands("UNKNOWN_COMMAND");

@@ -16,4 +16,8 @@ public class Player implements IPlayer{
     public int getCaptures() {
         return this.captures;
     }
+    @Override
+    public void resetCaptures() {
+        this.captures = 0;
+    }
 }

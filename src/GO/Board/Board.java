@@ -48,6 +48,8 @@ public class Board implements IBoard {
     @Override
     public void clearBoard() {
         this.initBoard();
+        this.white.resetCaptures();
+        this.black.resetCaptures();
     }
 
 
