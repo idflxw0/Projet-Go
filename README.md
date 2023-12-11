@@ -17,3 +17,5 @@ Sprint 3: SUICIDE ET KO (pas obligatoire)<br />
 3.interdire le suicide sauf si prise d'une pierre <br />
 4. règle du ko <br />
 5. faire une IA qui joue aléatoirement
+6. une commande privée à choisir exemple : player black random <br />
+player white human
