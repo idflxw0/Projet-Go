@@ -19,3 +19,4 @@ Sprint 3: SUICIDE ET KO (pas obligatoire)<br />
 5. faire une IA qui joue aléatoirement
 6. une commande privée à choisir exemple : player black random <br />
 player white human
+7.Une commande qui récupère un txt pour faire des tests d'un seul coup au lieu d'écrire chauque commande une par une
