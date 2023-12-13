@@ -81,7 +81,7 @@ public class Board implements IBoard {
             return "INCORRECT_PLAY";
         }
 
-        if (row < 1 || row > size) {
+        if (row < 1 || row > size || column < 'A' || column > 'A' + size - 1) {
             return "INCORRECT_PLAY";
         }
 
@@ -111,6 +111,7 @@ public class Board implements IBoard {
         if (rowIndex < size - 1) checkAdjacent(rowIndex + 1, columnIndex, color, friendGroups, enemyGroups); // Check the point below
         if (columnIndex < size - 1) checkAdjacent(rowIndex, columnIndex + 1, color, friendGroups, enemyGroups); // Check the point to the right
 
+        System.out.println(enemyGroups);
         // Check for captures
         for (Set<String> group : enemyGroups) {
             if (countLiberties(group) == 0) {
