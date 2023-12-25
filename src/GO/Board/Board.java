@@ -7,27 +7,44 @@
  */
 package GO.Board;
 
-import GO.Players.IPlayer;
+import GO.Players.AI;
 import GO.Players.Player;
 
 import java.util.*;
 
 public class Board implements IBoard {
-    private static final int SEUIL = 10;
+    private static final int THRESHOLD = 10;
+    private static final int BOARD_MIN_SIZE = 2;
+    private static final int BOARD_MAX_SIZE = 26;
+    private static final int BOARD_DEFAULT_SIZE = 19;
+    private static final int BOT_X = 0;
+    private static final int BOT_Y = 1;
     private Stone[][] board; //board of the game
-    private final int size; //size of the board
+    private int size; //size of the board
     private IPlayer white; //white player
     private IPlayer black; //black player
 
+
+    /**
+     * Create a board of default size
+     */
+    public Board() {
+        this.board = new Stone[BOARD_DEFAULT_SIZE][BOARD_DEFAULT_SIZE];
+        this.size = BOARD_DEFAULT_SIZE;
+        this.white = new Player(Stone.WHITE,false);
+        this.black = new Player(Stone.BLACK, true);
+        initBoard();
+    }
     /**
      * Create a board of size x size
      * @param size size of the board
      */
     public Board(int size) {
+        if (size < BOARD_MIN_SIZE || size > BOARD_MAX_SIZE) throw new IllegalArgumentException ("Size must be between 2 and 26");
         this.board = new Stone[size][size];
         this.size = size;
-        this.white = new Player();
-        this.black = new Player();
+        this.white = new Player(Stone.WHITE,false);
+        this.black = new Player(Stone.BLACK,true);
         initBoard();
     }
 
@@ -52,6 +69,25 @@ public class Board implements IBoard {
         this.black.resetCaptures();
     }
 
+    @Override
+    public String playBot(String color) {
+        if (color.equals(black.getColor()) && !(this.black instanceof AI)) {
+            this.black = new AI(Stone.BLACK,true);
+            playBot("black");
+            return "SUCCESS";
+        } else if (!(white instanceof AI) && !(this.black instanceof AI)){
+            this.white= new AI(Stone.WHITE,false);
+            black.setTurn(true);
+            return "SUCCESS";
+        }
+        AI bot_player = black instanceof AI ? (AI)black : (AI)white;
+        int[] pos = bot_player.placeStonesRandomly(this.board);
+        char column = (char) (pos[BOT_Y] + 'A');
+        int x = pos[BOT_X];
+        String position = column + Integer.toString(x);
+        return play(color,position);
+    }
+
 
     /**
      * Play a stone on the board
@@ -73,7 +109,6 @@ public class Board implements IBoard {
         if (!Character.isLetter(column)) return "INCORRECT_PLAY";
 
         if (!rowString.matches("\\d+")) return "INCORRECT_PLAY";
-
         int row;
         try {
             row = Integer.parseInt(rowString);
@@ -84,9 +119,36 @@ public class Board implements IBoard {
         if (row < 1 || row > size || column < 'A' || column > 'A' + size - 1) {
             return "INCORRECT_PLAY";
         }
-
         Stone type = color.equals("black") ? Stone.BLACK : Stone.WHITE;
-        return placeStones(row, column, type) ? "SUCCESS" : "ILLEGAL_MOVE";
+        String output = "INCORRECT_PLAY";
+        if (black.getTurn() && (black.getStone() == type)) {
+            output = placeStones(row, column, type) ? "SUCCESS" : "ILLEGAL_MOVE";
+            if (!output.equals("ILLEGAL_MOVE")) {
+                black.setTurn(false);
+                if (white instanceof AI) {
+                    white.setTurn(true);
+                    playBot("white");
+                    showBoard();
+                    white.setTurn(false);
+                } else {
+                    white.setTurn(true);
+                }
+            }
+        } else if (!black.getTurn() && (white.getTurn() && white.getStone() == type)) {
+            output = placeStones(row, column, type) ? "SUCCESS" : "ILLEGAL_MOVE";
+            if (!output.equals("ILLEGAL_MOVE")) {
+                white.setTurn(false);
+                if (black instanceof AI) {
+                    black.setTurn(true);
+                    playBot("black");
+                    showBoard();
+                    black.setTurn(false);
+                } else{
+                    black.setTurn(true);
+                }
+            }
+        }
+        return output;
     }
 
     /**
@@ -111,7 +173,6 @@ public class Board implements IBoard {
         if (rowIndex < size - 1) checkAdjacent(rowIndex + 1, columnIndex, color, friendGroups, enemyGroups); // Check the point below
         if (columnIndex < size - 1) checkAdjacent(rowIndex, columnIndex + 1, color, friendGroups, enemyGroups); // Check the point to the right
 
-        System.out.println(enemyGroups);
         // Check for captures
         for (Set<String> group : enemyGroups) {
             if (countLiberties(group) == 0) {
@@ -125,6 +186,7 @@ public class Board implements IBoard {
             board[rowIndex][columnIndex] = Stone.EMPTY; // Remove the placed stone
             return false;
         }
+        System.out.println("nbLiberties for " + board[rowIndex][columnIndex] + ": " + getNbLiberties(rowIndex, columnIndex));
         return true;
     }
 
@@ -185,6 +247,9 @@ public class Board implements IBoard {
         exploreGroup(x, y - 1, color, group);
         exploreGroup(x, y + 1, color, group);
     }
+    private int getNbLiberties(int x, int y) {
+        return countLiberties(getGroup(x, y, board[x][y]));
+    }
 
     /**
      * Count the liberties of a group of stones
@@ -239,16 +304,14 @@ public class Board implements IBoard {
      */
     private void manageCaptures(int x, int y) {
         if (board[x][y] == Stone.BLACK) white.addCaptures(1);
-            else black.addCaptures(1);
+        else black.addCaptures(1);
     }
-
-
     /**
      * Show the board
      */
     @Override
     public void showBoard() {
-        int msgL1 = size >= SEUIL ? 1 + (size - SEUIL) : 1;
+        int msgL1 = size >= THRESHOLD ? 1 + (size - THRESHOLD) : 1;
         int msgL2 = msgL1 - 1;
 
         //HEADER
@@ -282,5 +345,8 @@ public class Board implements IBoard {
             System.out.printf("%c ", 'A' + i);
         }
         System.out.println();
+    }
+    public Stone[][] getBoard() {
+        return board;
     }
 }
