@@ -136,6 +136,12 @@ public class InputHandler {
         toString(playedSituation);
     }
 
+    /**
+     * Check if the input array contains the word
+     * @param inputArray : input array of the command
+     * @param word : word to check
+     * @return : true if the input array contains the word, false otherwise
+     */
     public boolean inputArraysContains(String[] inputArray, String word) {
         if (inputArray.length < 2) return false;
         for (String words : inputArray) {
@@ -146,6 +152,11 @@ public class InputHandler {
         return false;
     }
 
+    /**
+     * Play with the AI
+     * @param inputArray : input array of the command
+     * @return : true if the AI has played, false otherwise
+     */
     private boolean play_with_AI(String[] inputArray) {
         String color = hasCommandCount ? inputArray[AI_COLOR_INDEX_WITH_COMMAND_COUNT] : inputArray[AI_COLOR_INDEX];
         String output = board.playBot(color);

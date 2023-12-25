@@ -1,17 +1,19 @@
-1 boardsize 2
-2 showboard
-play black A1
-showboard
-play white B2
-showboard
-play black A2
-showboard
+boardsize 4
+play white B4
+play white C4
+play white A2
+play white A3
 play white B1
-showboard
-play black A2
-showboard
-play white A1
-showboard
-play black A2
+play white D2
+play white D3
+play black B2
+play black C2
+play black B3
+play black C3
+play white C1
+play black B2
+play black C2
+play black B3
+play black C3
 showboard
 quit

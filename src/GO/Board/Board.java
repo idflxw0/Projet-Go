@@ -115,7 +115,6 @@ public class Board implements IBoard {
         } catch (NumberFormatException e) {
             return "INCORRECT_PLAY";
         }
-
         if (row < 1 || row > size || column < 'A' || column > 'A' + size - 1) {
             return "INCORRECT_PLAY";
         }
