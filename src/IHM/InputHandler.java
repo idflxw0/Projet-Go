@@ -2,8 +2,6 @@ package IHM;
 
 import GO.Board.Board;
 import GO.Board.IBoard;
-import GO.Players.AI;
-import jdk.jshell.spi.SPIResolutionException;
 
 public class InputHandler {
     private static IBoard board; //board of the game
@@ -28,11 +26,13 @@ public class InputHandler {
     private static final int PLAY_COMMAND_INDEX_WITHOUT_COMMAND_COUNT = 2;
     private static final int COLOR_INDEX_WITH_COMMAND_COUNT = 2;
     private static final int COMMAND_INDEX_WITH_COMMAND_COUNT = 3;
+    private static boolean hasAI;
 
     public InputHandler() {
         board = new Board();
         commandCount = 0;
         hasCommandCount = false;
+        hasAI = false;
     }
 
     /**
@@ -111,6 +111,9 @@ public class InputHandler {
                 board.clearBoard();
                 toString("SUCCESS");
             }
+            else if (input.contains("player")) {
+                this.selectPlayer(inputArray);
+            }
             else if (input.contains("play")) {
                 play(inputArray);
             }
@@ -125,15 +128,17 @@ public class InputHandler {
      */
     private void play(String[] inputArray) {
         if (inputArraysContains(inputArray,"console")) if (play_with_AI(inputArray)) return;
-
-        int colorIndex = hasCommandCount ?
-                COLOR_INDEX_WITH_COMMAND_COUNT :INDEX_WITHOUT_COMMAND_COUNT;
-        int commandIndex = hasCommandCount ?
-                COMMAND_INDEX_WITH_COMMAND_COUNT : PLAY_COMMAND_INDEX_WITHOUT_COMMAND_COUNT;
-        String color = inputArray[colorIndex];
-        String command = inputArray[commandIndex];
-        String playedSituation = board.play(color, command);
-        toString(playedSituation);
+        try {
+            int colorIndex = hasCommandCount ?
+                    COLOR_INDEX_WITH_COMMAND_COUNT :INDEX_WITHOUT_COMMAND_COUNT;
+            int commandIndex = hasCommandCount ?
+                    COMMAND_INDEX_WITH_COMMAND_COUNT : PLAY_COMMAND_INDEX_WITHOUT_COMMAND_COUNT;
+            String color = inputArray[colorIndex];
+            String command = inputArray[commandIndex];
+            toString(board.play(color, command));
+        } catch (ArrayIndexOutOfBoundsException e) {
+            toString("INCORRECT_PLAY");
+        }
     }
 
     /**
@@ -152,11 +157,6 @@ public class InputHandler {
         return false;
     }
 
-    /**
-     * Play with the AI
-     * @param inputArray : input array of the command
-     * @return : true if the AI has played, false otherwise
-     */
     private boolean play_with_AI(String[] inputArray) {
         String color = hasCommandCount ? inputArray[AI_COLOR_INDEX_WITH_COMMAND_COUNT] : inputArray[AI_COLOR_INDEX];
         String output = board.playBot(color);
@@ -164,10 +164,26 @@ public class InputHandler {
             toString(output);
             return true;
         }
-
         return false;
     }
 
+    public void selectPlayer(String[] inputArray) {
+        try {
+            String player = hasCommandCount ? inputArray[3] : inputArray[2];
+            if (player.equals("console") ) {
+                hasAI = false;
+            } else if (player.equals("random")&& !hasAI) {
+                hasAI = true;
+                play_with_AI(inputArray);
+
+            }else {
+                toString("UNKNOWN_PLAYER");
+            }
+        } catch (ArrayIndexOutOfBoundsException a) {
+            toString("UNKNOWN_PLAYER");
+        }
+
+    }
 
     /**
      * Manage the commands
@@ -216,6 +232,13 @@ public class InputHandler {
                     System.out.println("?" + commandCount + " illegal move");
                 } else {
                     System.out.println("? illegal move");
+                }
+            }
+            case "UNKNOWN_PLAYER" -> {
+                if (hasCommandCount) {
+                    System.out.println("?"+commandCount + " incorrect player selection");
+                } else {
+                    System.out.println("? incorrect player selection");
                 }
             }
             default -> System.out.println("?" + commandCount);

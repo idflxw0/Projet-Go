@@ -73,11 +73,11 @@ public class Board implements IBoard {
     public String playBot(String color) {
         if (color.equals(black.getColor()) && !(this.black instanceof AI)) {
             this.black = new AI(Stone.BLACK,true);
-            playBot("black");
+            this.black.setTurn(false);
+            this.white.setTurn(true);
             return "SUCCESS";
         } else if (!(white instanceof AI) && !(this.black instanceof AI)){
             this.white= new AI(Stone.WHITE,false);
-            black.setTurn(true);
             return "SUCCESS";
         }
         AI bot_player = black instanceof AI ? (AI)black : (AI)white;
