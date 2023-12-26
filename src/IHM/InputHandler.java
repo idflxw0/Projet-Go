@@ -27,12 +27,14 @@ public class InputHandler {
     private static final int COLOR_INDEX_WITH_COMMAND_COUNT = 2;
     private static final int COMMAND_INDEX_WITH_COMMAND_COUNT = 3;
     private static boolean hasAI;
+    private static String aiPlayer;
 
     public InputHandler() {
         board = new Board();
         commandCount = 0;
         hasCommandCount = false;
         hasAI = false;
+        aiPlayer = "white";
     }
 
     /**
@@ -82,6 +84,7 @@ public class InputHandler {
             }
             try {
                 board = new Board(size);
+                hasAI = false;
                 toString("SUCCESS");
             } catch (IllegalArgumentException e) {
                 toString("SIZE_ERROR");
@@ -114,7 +117,7 @@ public class InputHandler {
             else if (input.contains("player")) {
                 this.selectPlayer(inputArray);
             }
-            else if (input.contains("play")) {
+            else if (inputArraysContains(inputArray,"play")) {
                 play(inputArray);
             }
             else toString("UNKNOWN_COMMAND");
@@ -135,7 +138,18 @@ public class InputHandler {
                     COMMAND_INDEX_WITH_COMMAND_COUNT : PLAY_COMMAND_INDEX_WITHOUT_COMMAND_COUNT;
             String color = inputArray[colorIndex];
             String command = inputArray[commandIndex];
-            toString(board.play(color, command));
+            if (color.equals(aiPlayer) && hasAI){
+                toString("INCORRECT_PLAY");
+                return;
+            }
+            String[] playoutput = board.play(color, command).split("/");
+            if (hasAI && !playoutput[0].equals("ILLEGAL_MOVE")) {
+                toString(playoutput[0]);
+                System.out.print("ai player ");
+                toString(playoutput[1]);
+            } else {
+                toString(playoutput[0]);
+            }
         } catch (ArrayIndexOutOfBoundsException e) {
             toString("INCORRECT_PLAY");
         }
@@ -174,8 +188,8 @@ public class InputHandler {
                 hasAI = false;
             } else if (player.equals("random")&& !hasAI) {
                 hasAI = true;
+                aiPlayer = hasCommandCount ? inputArray[AI_COLOR_INDEX_WITH_COMMAND_COUNT] : inputArray[AI_COLOR_INDEX];
                 play_with_AI(inputArray);
-
             }else {
                 toString("UNKNOWN_PLAYER");
             }
@@ -232,6 +246,14 @@ public class InputHandler {
                     System.out.println("?" + commandCount + " illegal move");
                 } else {
                     System.out.println("? illegal move");
+                }
+            }
+            case "NOT_YOUR_TURN" -> {
+                if (hasCommandCount) {
+                    System.out.println("?" + commandCount + " it is not your turn");
+                }
+                else {
+                    System.out.println("? it is not your turn");
                 }
             }
             case "UNKNOWN_PLAYER" -> {
