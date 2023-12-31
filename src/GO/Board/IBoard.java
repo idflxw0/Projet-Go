@@ -10,5 +10,7 @@ public interface IBoard {
     String play(String color, String pos);
     String playBot(String color);
     boolean isPlaceable(int row, int column);
+    boolean placeStones(int row, char column, Stone color);
     Stone[][] getBoard();
+    int getSize();
 }
