@@ -26,15 +26,15 @@ public class InputHandler {
     private static final int PLAY_COMMAND_INDEX_WITHOUT_COMMAND_COUNT = 2;
     private static final int COLOR_INDEX_WITH_COMMAND_COUNT = 2;
     private static final int COMMAND_INDEX_WITH_COMMAND_COUNT = 3;
-    private static boolean hasAI;
-    private static String aiPlayer;
+    private static boolean whiteAI;
+    private static boolean blackAI;
 
     public InputHandler() {
         board = new Board();
         commandCount = 0;
         hasCommandCount = false;
-        hasAI = false;
-        aiPlayer = "white";
+        whiteAI = false;
+        blackAI = false;
     }
 
     /**
@@ -84,7 +84,8 @@ public class InputHandler {
             }
             try {
                 board = new Board(size);
-                hasAI = false;
+                whiteAI = false;
+                blackAI = false;
                 toString("SUCCESS");
             } catch (IllegalArgumentException e) {
                 toString("SIZE_ERROR");
@@ -117,6 +118,9 @@ public class InputHandler {
             else if (input.contains("player")) {
                 this.selectPlayer(inputArray);
             }
+            else if ((whiteAI && blackAI) && input.equals("play")) {
+                playAIvsAI();
+            }
             else if (inputArraysContains(inputArray,"play")) {
                 play(inputArray);
             }
@@ -138,18 +142,7 @@ public class InputHandler {
                     COMMAND_INDEX_WITH_COMMAND_COUNT : PLAY_COMMAND_INDEX_WITHOUT_COMMAND_COUNT;
             String color = inputArray[colorIndex];
             String command = inputArray[commandIndex];
-            if (color.equals(aiPlayer) && hasAI){
-                toString("INCORRECT_PLAY");
-                return;
-            }
-            String[] playoutput = board.play(color, command).split("/");
-            if (hasAI && !playoutput[0].equals("ILLEGAL_MOVE")) {
-                toString(playoutput[0]);
-                System.out.print("ai player ");
-                toString(playoutput[1]);
-            } else {
-                toString(playoutput[0]);
-            }
+            toString(board.play(color, command));
         } catch (ArrayIndexOutOfBoundsException e) {
             toString("INCORRECT_PLAY");
         }
@@ -172,26 +165,57 @@ public class InputHandler {
     }
 
     private boolean play_with_AI(String[] inputArray) {
-        String color = hasCommandCount ? inputArray[AI_COLOR_INDEX_WITH_COMMAND_COUNT] : inputArray[AI_COLOR_INDEX];
-        String output = board.playBot(color);
-        if (output.equals("SUCCESS")) {
-            toString(output);
-            return true;
+        try {
+            String color = hasCommandCount ? inputArray[AI_COLOR_INDEX_WITH_COMMAND_COUNT] : inputArray[AI_COLOR_INDEX];
+            String output = board.playBot(color);
+            if (output.contains("SUCCESS")) toString(output);
+            return output.contains("played on");
+        } catch (ArrayIndexOutOfBoundsException e) {
+            toString("INCORRECT_PLAY");
+            return false;
         }
-        return false;
     }
+
+    private void playAIvsAI() {
+        boolean gameContinues = true;
+        while (gameContinues) {
+            String whiteMove = board.playBot("white");
+            if (isGameOver(whiteMove)) {
+                gameContinues = false;
+                break;
+            }
+            String blackMove = board.playBot("black");
+            if (isGameOver(blackMove)) {
+                gameContinues = false;
+            }
+        }
+        System.out.println("BOTS CANNOT CONTINUE THEIR PLAYS");
+    }
+
+    private boolean isGameOver(String moveResult) {
+        return moveResult.contains("ILLEGAL_PLAY");
+    }
+
 
     public void selectPlayer(String[] inputArray) {
         try {
-            String player = hasCommandCount ? inputArray[3] : inputArray[2];
-            if (player.equals("console") ) {
-                hasAI = false;
-            } else if (player.equals("random")&& !hasAI) {
-                hasAI = true;
-                aiPlayer = hasCommandCount ? inputArray[AI_COLOR_INDEX_WITH_COMMAND_COUNT] : inputArray[AI_COLOR_INDEX];
-                play_with_AI(inputArray);
-            }else {
-                toString("UNKNOWN_PLAYER");
+            String playerType = hasCommandCount ?
+                    inputArray[AI_COMMAND_INDEX_WITH_COMMAND_COUNT] : inputArray[AI_COMMAND_INDEX];
+            String color = hasCommandCount ?
+                    inputArray[AI_COLOR_INDEX_WITH_COMMAND_COUNT] : inputArray[AI_COLOR_INDEX];
+            switch (playerType) {
+                case "console":
+                    if (color.equals("white")) whiteAI = false;
+                    else blackAI = false;
+                    break;
+                case "random":
+                    if (color.equals("white")) whiteAI = true;
+                    else blackAI = true;
+                    play_with_AI(inputArray);
+                    break;
+                default:
+                    toString("UNKNOWN_PLAYER");
+                    break;
             }
         } catch (ArrayIndexOutOfBoundsException a) {
             toString("UNKNOWN_PLAYER");

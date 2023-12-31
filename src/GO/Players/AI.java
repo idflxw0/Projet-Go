@@ -1,9 +1,11 @@
 package GO.Players;
 
 
+import GO.Board.IBoard;
 import GO.Board.Stone;
 
 import java.awt.Point;
+import java.util.Collections;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Random;
@@ -15,27 +17,39 @@ public class AI extends Player{
         random = new Random();
     }
 
-    public Point placeStonesRandomly(Stone[][] board) {
-        int size = board.length;
-        List<Point> emptySpots = new ArrayList<>();
+   /* public Point placeStoneRandomly(IBoard board, Stone color) {
+        Random random = new Random();
+        int size = board.getSize();
+        int maxAttempts = size * size; // Limit the number of attempts to prevent infinite loop
+        for (int attempt = 0; attempt < maxAttempts; attempt++) {
+            int x = random.nextInt(size); // Random row
+            int y = random.nextInt(size); // Random column
 
-        // Collect all empty spots
+            if (board.isPlaceable(x, y) && board.placeStones(x + 1, (char) ('A' + y), color)) {
+                return new Point(x, y);
+            }
+        }
+        return null; // No legal move found after maxAttempts
+    }*/
+
+    public Point placeStoneRandomly(IBoard board, Stone color) {
+        int size = board.getSize();
+        List<Point> emptyPositions = new ArrayList<>();
+
         for (int x = 0; x < size; x++) {
             for (int y = 0; y < size; y++) {
-                if (board[x][y] == Stone.EMPTY) {
-                    emptySpots.add(new Point(x, y));
+                if (board.isPlaceable(x, y)) {
+                    emptyPositions.add(new Point(x, y));
                 }
             }
         }
-
-        // If there are no empty spots, return null or handle appropriately
-        if (emptySpots.isEmpty()) {
-            return null; // or handle this case as per your game's rules
+        Collections.shuffle(emptyPositions, new Random());
+        for (Point pos : emptyPositions) {
+            if (board.placeStones(pos.x + 1, (char) ('A' + pos.y), color)) {
+                return pos;
+            }
         }
-
-        // Select a random empty spot
-        int index = random.nextInt(emptySpots.size());
-        return emptySpots.get(index);
+        return null;
     }
 
 }
