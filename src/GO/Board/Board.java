@@ -19,8 +19,6 @@ public class Board implements IBoard {
     private static final int BOARD_MIN_SIZE = 2;
     private static final int BOARD_MAX_SIZE = 26;
     private static final int BOARD_DEFAULT_SIZE = 19;
-    private static final int BOT_X = 0;
-    private static final int BOT_Y = 1;
     private Stone[][] board; //board of the game
     private int size; //size of the board
     private IPlayer white; //white player
@@ -37,6 +35,13 @@ public class Board implements IBoard {
         this.black = new Player(Stone.BLACK, true);
         initBoard();
     }
+    public Board(int size, String play) {
+        this.board = new Stone[size][size];
+        this.white = new Player(Stone.WHITE,false);
+        this.black = new Player(Stone.BLACK, true);
+        initBoard();
+    }
+
     /**
      * Create a board of size x size
      * @param size size of the board
@@ -82,17 +87,21 @@ public class Board implements IBoard {
             this.white = new AI(Stone.WHITE, false);
             return "SUCCESS";
         }
-
         // Determine the AI player based on color
-        AI botPlayer = color.equalsIgnoreCase("black") ? (AI) black : (AI) white;
+        AI botPlayer = (AI) (color.equalsIgnoreCase("black") ? black : white);
+        IPlayer humanPlayer = color.equalsIgnoreCase("black") ? white : black;
 
-        // Place a stone randomly
-        Point pos = botPlayer.placeStonesRandomly(this.board);
-        int x = pos.x;
-        char column = (char) (pos.y + 'A');
-        String position = column + Integer.toString(x);
-
-        return play(color, position);
+        Point pos = botPlayer.placeStoneRandomly(this, botPlayer.getStone());
+        if (pos != null) {
+            char column = (char) ('A' + pos.y);
+            int row = pos.x + 1;
+            System.out.println("bot " + color + " played on " + column + row);
+            showBoard();
+            botPlayer.setTurn(false);
+            humanPlayer.setTurn(true);
+            return "SUCCESS";
+        }
+        return "ILLEGAL_PLAY";
     }
 
 
@@ -140,18 +149,8 @@ public class Board implements IBoard {
             currentPlayer.setTurn(false);
             oppositePlayer.setTurn(true);
 
-            // If the opposite player is AI, make it play
             if (oppositePlayer instanceof AI) {
-                String oppositeColor = (type == Stone.BLACK) ? "white" : "black";
-                String aiResult  = playBot(oppositeColor);
-                if (aiResult.equals("SUCCESS"))
-                    showBoard();
-                else {
-                    currentPlayer.setTurn(true);
-                    oppositePlayer.setTurn(false);
-                }
-                output += "/" + aiResult;
-                // Consider adding a method to show the updated board state
+                playBot(oppositePlayer.getColor());
             }
         }
         return output;
@@ -164,7 +163,7 @@ public class Board implements IBoard {
      * @param color : color of the stone
      * @return : true if the stone is placed, false otherwise
      */
-    private boolean placeStones(int x, char y, Stone color) {
+    public boolean placeStones(int x, char y, Stone color) {
         int columnIndex = y - 'A';
         int rowIndex = x - 1;
         if (!isPlaceable(rowIndex, columnIndex)){
@@ -357,5 +356,10 @@ public class Board implements IBoard {
     }
     public Stone[][] getBoard() {
         return board;
+    }
+
+    @Override
+    public int getSize() {
+        return size;
     }
 }
