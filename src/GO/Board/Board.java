@@ -13,7 +13,6 @@ import GO.Players.Player;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
-
 public class Board implements IBoard {
     private static final int THRESHOLD = 10;
     private static final int BOARD_MIN_SIZE = 2;
