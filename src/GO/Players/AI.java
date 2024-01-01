@@ -17,21 +17,13 @@ public class AI extends Player{
         random = new Random();
     }
 
-   /* public Point placeStoneRandomly(IBoard board, Stone color) {
-        Random random = new Random();
-        int size = board.getSize();
-        int maxAttempts = size * size; // Limit the number of attempts to prevent infinite loop
-        for (int attempt = 0; attempt < maxAttempts; attempt++) {
-            int x = random.nextInt(size); // Random row
-            int y = random.nextInt(size); // Random column
 
-            if (board.isPlaceable(x, y) && board.placeStones(x + 1, (char) ('A' + y), color)) {
-                return new Point(x, y);
-            }
-        }
-        return null; // No legal move found after maxAttempts
-    }*/
-
+    /**
+     * Place a stone randomly on the board
+     * @param board the board to place the stone on
+     * @param color the color of the stone to place
+     * @return the position of the stone placed or null if no stone was placed
+     */
     public Point placeStoneRandomly(IBoard board, Stone color) {
         int size = board.getSize();
         List<Point> emptyPositions = new ArrayList<>();
