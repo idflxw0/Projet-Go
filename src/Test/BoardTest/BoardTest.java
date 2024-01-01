@@ -3,7 +3,6 @@ package Test.BoardTest;
 import static org.junit.jupiter.api.Assertions.*;
 
 class BoardTest {
-
     @org.junit.jupiter.api.Test
     void clearBoard() {
         int size;

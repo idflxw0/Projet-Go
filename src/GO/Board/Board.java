@@ -13,7 +13,6 @@ import GO.Players.Player;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
-
 public class Board implements IBoard {
     private static final int THRESHOLD = 10;
     private static final int BOARD_MIN_SIZE = 2;
@@ -188,7 +187,7 @@ public class Board implements IBoard {
             }
         }
 
-        // Check if the placed stone is in atari (has no liberties)
+        // Check if the placed stone is in atari (has no liberties).
         if (countLiberties(getGroup(rowIndex, columnIndex, color)) == 0) {
             manageCaptures(rowIndex, columnIndex);
             board[rowIndex][columnIndex] = Stone.EMPTY; // Remove the placed stone

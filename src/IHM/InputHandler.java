@@ -4,14 +4,13 @@ import GO.Board.Board;
 import GO.Board.IBoard;
 
 public class InputHandler {
-    private static IBoard board; //board of the game
-    private static int commandCount; //number of commands
-    private static boolean hasCommandCount; //true if the command has a command number, false otherwise
+    private static IBoard board; //Board of the game
+    private static int commandCount; //Number of commands
+    private static boolean hasCommandCount; //condition : True if the command has a command number, false otherwise
 
     //SPLIT CONSTANTS
     private static final int CHECK_HAS_COMMAND = 0;
     private static final int CORRECT_ARRAY_LENGTH = 1;
-
 
     //BOARD INIT CONSTANTS
     private static final int INDEX_WITHOUT_COMMAND_COUNT = 1;
@@ -36,7 +35,6 @@ public class InputHandler {
         whiteAI = false;
         blackAI = false;
     }
-
     /**
      * Process the input
      * @param input : input of the user
