@@ -162,6 +162,11 @@ public class InputHandler {
         return false;
     }
 
+    /**
+     * Play with the AI
+     * @param inputArray : input array of the command
+     * @return : true if the AI has played, false otherwise
+     */
     private boolean play_with_AI(String[] inputArray) {
         try {
             String color = hasCommandCount ? inputArray[AI_COLOR_INDEX_WITH_COMMAND_COUNT] : inputArray[AI_COLOR_INDEX];
@@ -174,6 +179,9 @@ public class InputHandler {
         }
     }
 
+    /**
+     * Play with the AI
+     */
     private void playAIvsAI() {
         boolean gameContinues = true;
         while (gameContinues) {
@@ -190,11 +198,20 @@ public class InputHandler {
         System.out.println("BOTS CANNOT CONTINUE THEIR PLAYS");
     }
 
+    /**
+     * Check if the game is over
+     * @param moveResult : result of the move
+     * @return : true if the game is over, false otherwise
+     */
     private boolean isGameOver(String moveResult) {
         return moveResult.contains("ILLEGAL_PLAY");
     }
 
 
+    /**
+     * Select the player
+     * @param inputArray : input array of the command
+     */
     public void selectPlayer(String[] inputArray) {
         try {
             String playerType = hasCommandCount ?
