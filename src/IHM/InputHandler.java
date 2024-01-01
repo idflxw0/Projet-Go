@@ -4,9 +4,9 @@ import GO.Board.Board;
 import GO.Board.IBoard;
 
 public class InputHandler {
-    private static IBoard board; //board of the game
-    private static int commandCount; //number of commands
-    private static boolean hasCommandCount; //true if the command has a command number, false otherwise
+    private static IBoard board; //Board of the game
+    private static int commandCount; //Number of commands
+    private static boolean hasCommandCount; //condition : True if the command has a command number, false otherwise
 
     //SPLIT CONSTANTS
     private static final int CHECK_HAS_COMMAND = 0;

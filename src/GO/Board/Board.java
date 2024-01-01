@@ -187,7 +187,7 @@ public class Board implements IBoard {
             }
         }
 
-        // Check if the placed stone is in atari (has no liberties)
+        // Check if the placed stone is in atari (has no liberties).
         if (countLiberties(getGroup(rowIndex, columnIndex, color)) == 0) {
             manageCaptures(rowIndex, columnIndex);
             board[rowIndex][columnIndex] = Stone.EMPTY; // Remove the placed stone
