@@ -12,7 +12,6 @@ public class InputHandler {
     private static final int CHECK_HAS_COMMAND = 0;
     private static final int CORRECT_ARRAY_LENGTH = 1;
 
-
     //BOARD INIT CONSTANTS
     private static final int INDEX_WITHOUT_COMMAND_COUNT = 1;
     private static final int INDEX_WITH_COMMAND_COUNT = 2;
@@ -36,7 +35,6 @@ public class InputHandler {
         whiteAI = false;
         blackAI = false;
     }
-
     /**
      * Process the input
      * @param input : input of the user
