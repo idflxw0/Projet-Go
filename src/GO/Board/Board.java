@@ -75,6 +75,10 @@ public class Board implements IBoard {
         this.black.resetCaptures();
     }
 
+    /**
+     * Let the bot play
+     * @return : SUCCESS if the bot played, ILLEGAL_PLAY otherwise
+     */
     @Override
     public String playBot(String color) {
         // Set AI for the specified color if not already set
@@ -102,8 +106,6 @@ public class Board implements IBoard {
         }
         return "ILLEGAL_PLAY";
     }
-
-
 
     /**
      * Play a stone on the board
