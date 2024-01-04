@@ -38,6 +38,15 @@ public class Board implements IBoard {
         this.board = new Stone[size][size];
         this.white = new Player(Stone.WHITE,false);
         this.black = new Player(Stone.BLACK, true);
+        this.size = size;
+        String[] moves = play.split(" ");
+        for (String move : moves) {
+            String[] parts = move.split(",");
+            int x = Integer.parseInt(parts[0]);
+            int y = Integer.parseInt(parts[1]);
+            Stone color = parts[2].equals("B") ? Stone.BLACK : Stone.WHITE;
+            board[x][y] = color;
+        }
         initBoard();
     }
 
@@ -117,7 +126,7 @@ public class Board implements IBoard {
      */
     @Override
     public String play(String color, String pos) {
-        if (!color.equals("black") && !color.equals("white")) return "INCORRECT_PLAY";
+        if (!color.equalsIgnoreCase("black") && !color.equalsIgnoreCase("white")) return "INCORRECT_PLAY";
 
         if (pos.length() < 2) return "INCORRECT_PLAY";
 
@@ -170,8 +179,6 @@ public class Board implements IBoard {
         if (!isPlaceable(rowIndex, columnIndex)){
             return false;
         }
-
-
         board[rowIndex][columnIndex] = color;
 
         List<Set<String>> friendGroups = new ArrayList<>(); // List of friend groups
@@ -256,7 +263,7 @@ public class Board implements IBoard {
         exploreGroup(x, y - 1, color, group);
         exploreGroup(x, y + 1, color, group);
     }
-    private int getNbLiberties(int x, int y) {
+    public int getNbLiberties(int x, int y) {
         return countLiberties(getGroup(x, y, board[x][y]));
     }
 
@@ -337,8 +344,6 @@ public class Board implements IBoard {
                 System.out.print(board[i][j] + " ");
             }
             System.out.printf("%2d", i + 1);
-
-
             if (i == msgL1) {
                 System.out.printf("     WHITE (O) has captured %d stones", white.getCaptures());
             }
@@ -355,6 +360,44 @@ public class Board implements IBoard {
         }
         System.out.println();
     }
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        int msgL1 = size >= THRESHOLD ? 1 + (size - THRESHOLD) : 1;
+        int msgL2 = msgL1 - 1;
+
+        // HEADER
+        sb.append("   ");
+        for (int i = 0; i < size; i++) {
+            sb.append(String.format("%c ", 'A' + i));
+        }
+        sb.append("\n");
+
+        // BODY
+        for (int i = size - 1; i >= 0; i--) {
+            sb.append(String.format("%2d ", i + 1));
+            for (int j = 0; j < size; j++) {
+                sb.append(board[i][j]).append(" ");
+            }
+            sb.append(String.format("%2d", i + 1));
+            if (i == msgL1) {
+                sb.append(String.format("     WHITE (O) has captured %d stones", white.getCaptures()));
+            }
+            if (i == msgL2) {
+                sb.append(String.format("     BLACK (X) has captured %d stones", black.getCaptures()));
+            }
+            sb.append("\n");
+        }
+
+        // FOOTER
+        sb.append("   ");
+        for (int i = 0; i < size; i++) {
+            sb.append(String.format("%c ", 'A' + i));
+        }
+        sb.append("\n");
+
+        return sb.toString();
+    }
+
     public Stone[][] getBoard() {
         return board;
     }

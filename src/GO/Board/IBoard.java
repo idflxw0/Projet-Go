@@ -13,4 +13,5 @@ public interface IBoard {
     boolean placeStones(int row, char column, Stone color);
     Stone[][] getBoard();
     int getSize();
+    int getNbLiberties(int x, int y);
 }
