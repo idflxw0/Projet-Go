@@ -2,6 +2,7 @@ package IHM;
 
 import GO.Board.Board;
 import GO.Board.IBoard;
+import GO.Board.Stone;
 
 public class InputHandler {
     private static IBoard board; //Board of the game
@@ -120,6 +121,7 @@ public class InputHandler {
                 playAIvsAI();
             }
             else if (inputArraysContains(inputArray,"play")) {
+//                board.placeStone(3,3, Stone.BLACK);
                 play(inputArray);
             }
             else toString("UNKNOWN_COMMAND");
@@ -164,38 +166,21 @@ public class InputHandler {
 
     /**
      * Play with the AI
-     * @param inputArray : input array of the command
-     * @return : true if the AI has played, false otherwise
-     */
-    private boolean play_with_AI(String[] inputArray) {
-        try {
-            String color = hasCommandCount ? inputArray[AI_COLOR_INDEX_WITH_COMMAND_COUNT] : inputArray[AI_COLOR_INDEX];
-            String output = board.playBot(color);
-            if (output.contains("SUCCESS")) toString(output);
-            return output.contains("played on");
-        } catch (ArrayIndexOutOfBoundsException e) {
-            toString("INCORRECT_PLAY");
-            return false;
-        }
-    }
-
-    /**
-     * Play with the AI
      */
     private void playAIvsAI() {
-        boolean gameContinues = true;
-        while (gameContinues) {
+        while (true) {
             String whiteMove = board.playBot("white");
             if (isGameOver(whiteMove)) {
-                gameContinues = false;
+                toString(whiteMove);
                 break;
             }
             String blackMove = board.playBot("black");
             if (isGameOver(blackMove)) {
-                gameContinues = false;
+                toString(whiteMove);
+                break;
             }
         }
-        System.out.println("BOTS CANNOT CONTINUE THEIR PLAYS");
+
     }
 
     /**
@@ -204,7 +189,7 @@ public class InputHandler {
      * @return : true if the game is over, false otherwise
      */
     private boolean isGameOver(String moveResult) {
-        return moveResult.contains("ILLEGAL_PLAY");
+        return moveResult.equals("GAME OVER");
     }
 
 
@@ -224,8 +209,6 @@ public class InputHandler {
                     else blackAI = false;
                     break;
                 case "random":
-                    if (color.equals("white")) whiteAI = true;
-                    else blackAI = true;
                     play_with_AI(inputArray);
                     break;
                 default:
@@ -237,6 +220,27 @@ public class InputHandler {
         }
 
     }
+
+
+    /**
+     * Play with the AI
+     * @param inputArray : input array of the command
+     * @return : true if the AI has played, false otherwise
+     */
+    private boolean play_with_AI(String[] inputArray) {
+        try {
+            String color = hasCommandCount ? inputArray[AI_COLOR_INDEX_WITH_COMMAND_COUNT] : inputArray[AI_COLOR_INDEX];
+            if (color.equals("white")) whiteAI = true;
+            else blackAI = true;
+            String output = board.playBot(color);
+            if (output.contains("SUCCESS")) toString(output);
+            return output.contains("played on");
+        } catch (ArrayIndexOutOfBoundsException e) {
+            toString("INCORRECT_PLAY");
+            return false;
+        }
+    }
+
 
     /**
      * Manage the commands
@@ -300,6 +304,14 @@ public class InputHandler {
                     System.out.println("?"+commandCount + " incorrect player selection");
                 } else {
                     System.out.println("? incorrect player selection");
+                }
+            }
+            case "GAME OVER" -> {
+                if (hasCommandCount) {
+                    System.out.println(commandCount + " GAME OVER! THERE IS NO EMPTY PLACES");
+                }
+                else {
+                    System.out.println( "GAME OVER! THERE IS NO EMPTY PLACES");
                 }
             }
             default -> System.out.println("?" + commandCount);

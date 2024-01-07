@@ -11,6 +11,7 @@ public interface IBoard {
     String playBot(String color);
     boolean isPlaceable(int row, int column);
     boolean placeStones(int row, char column, Stone color);
+    public boolean placeStone(int x, int y, Stone color);
     Stone[][] getBoard();
     int getSize();
     int getNbLiberties(int x, int y);
