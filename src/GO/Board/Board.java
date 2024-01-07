@@ -192,10 +192,12 @@ public class Board implements IBoard {
 
         // Check if the placed stone is in atari (has no liberties).
         if (countLiberties(getGroup(rowIndex, columnIndex, color)) == 0) {
+            System.out.println("HERE SUICIDE");
             manageCaptures(rowIndex, columnIndex);
             board[rowIndex][columnIndex] = Stone.EMPTY; // Remove the placed stone
             return false;
         }
+
 //        System.out.println("nbLiberties for " + board[rowIndex][columnIndex] + ": " + getNbLiberties(rowIndex, columnIndex));
         return true;
     }
