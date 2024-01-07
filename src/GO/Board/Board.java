@@ -423,7 +423,47 @@ public class Board implements IBoard {
      * @return true if it's a valid move, false otherwise.
      */
     private boolean isValidMove(Stone stone, int x, int y) {
-        return board[x][y] == Stone.EMPTY;
+        // Check if the position is empty
+        if (board[x][y] != Stone.EMPTY) {
+            return false;
+        }
+
+        // Temporarily place the stone to check for legality
+        board[x][y] = stone;
+
+        // Check for suicide move (if placing the stone removes all its liberties without a capture)
+        Set<String> group = getGroup(x, y, stone);
+        if (countLiberties(group) == 0 && !causesCapture(x, y, stone)) {
+            board[x][y] = Stone.EMPTY; // Reset to empty
+            return false;
+        }
+
+        board[x][y] = Stone.EMPTY; // Reset to empty
+        return true;
+    }
+
+    /**
+     * Check if placing a stone causes a capture of the opponent's stones.
+     * @param x the x-coordinate of the position
+     * @param y the y-coordinate of the position
+     * @param stone the color of the stone to be placed
+     * @return true if placing the stone results in a capture
+     */
+    private boolean causesCapture(int x, int y, Stone stone) {
+        // Check adjacent enemy groups for capture
+        Stone enemyStone = (stone == Stone.BLACK) ? Stone.WHITE : Stone.BLACK;
+        List<Set<String>> enemyGroups = new ArrayList<>();
+        if (x > 0) checkAdjacent(x - 1, y, enemyStone, new ArrayList<>(), enemyGroups);
+        if (y > 0) checkAdjacent(x, y - 1, enemyStone, new ArrayList<>(), enemyGroups);
+        if (x < size - 1) checkAdjacent(x + 1, y, enemyStone, new ArrayList<>(), enemyGroups);
+        if (y < size - 1) checkAdjacent(x, y + 1, enemyStone, new ArrayList<>(), enemyGroups);
+
+        for (Set<String> group : enemyGroups) {
+            if (countLiberties(group) == 0) {
+                return true; // Capture occurs
+            }
+        }
+        return false; // No capture
     }
 
 
