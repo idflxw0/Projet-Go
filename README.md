@@ -43,3 +43,7 @@ Ce qui peut être améliorable : <br />
 Gestion du Suicide et Ko:  il pourrait être intéressant de les considérer pour une version future, car elles sont des aspects essentiels du jeu de Go.<br />
 Commande pour tester en une seule fois: Automatiser les tests autant que possible peut faciliter le processus de développement. <br />
 Ajout d'une interface utilisateur: facilité les interactions avec les commandes pour les utilisateurs.<br />
+
+Diagramme : 
+https://i.imgur.com/qYm0Smg.jpg
+
