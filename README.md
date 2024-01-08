@@ -21,3 +21,24 @@ SUICIDE ET KO (pas obligatoire)<br />
 5.Une commande qui récupère un txt pour faire des tests d'un seul coup au lieu d'écrire chauque commande une par une
 6. passer son tour 
 7. arrêt du jeu entre bot vs bot
+
+Diagramme d'architecture :
+
+
+Liste synthétique des tests unitaires:
+Dans la classe BoardTest.java, on teste les fonctionnalités du jeu : 
+isPlaceable() , showBoard(), play(), testGetNbLiberties(), on teste également des états de plateau avec getExpectedBoardState1()
+
+<b>Bilan du projet :</b>
+
+Difficultés : 
+On n'a pas réussi à implémenter toutes les fonctionnalités telles que :
+Suicide et Ko: 
+Commande pour tester en une seule fois:On n'a pas automatisé les tests, cela a rendu les tests plus laborieux à effectuer.
+
+Arrêt du jeu entre bot vs bot: Si le jeu ne se termine pas proprement lorsqu'il est joué entre deux bots et boucle à l'infini.
+Réussite : On a réussi à mettre en place chaque SPRINTs dans les délais, le code est documenté et lisible.
+Ce qui peut être améliorable : 
+Gestion du Suicide et Ko:  il pourrait être intéressant de les considérer pour une version future, car elles sont des aspects essentiels du jeu de Go.
+Commande pour tester en une seule fois: Automatiser les tests autant que possible peut faciliter le processus de développement. 
+Ajout d'une interface utilisateur: facilité les interactions avec les commandes pour les utilisateurs.
