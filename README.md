@@ -33,7 +33,7 @@ isPlaceable() , showBoard(), play(), testGetNbLiberties(), on teste également d
 
 Difficultés : <br />
 On n'a pas réussi à implémenter toutes les fonctionnalités telles que : <br />
-Suicide et Ko: <br />
+Suicide et Ko <br />
 Commande pour tester en une seule fois:On n'a pas automatisé les tests, cela a rendu les tests plus laborieux à effectuer. <br />
 
 Arrêt du jeu entre bot vs bot: Si le jeu ne se termine pas proprement lorsqu'il est joué entre deux bots et boucle à l'infini.<br />
