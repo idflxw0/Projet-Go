@@ -45,5 +45,5 @@ Commande pour tester en une seule fois: Automatiser les tests autant que possibl
 Ajout d'une interface utilisateur: facilité les interactions avec les commandes pour les utilisateurs.<br />
 
 Diagramme : 
-https://i.imgur.com/qYm0Smg.jpg
+![src (2)](https://github.com/idflxw0/Projet-Go/assets/98221552/cea019ad-a38e-46d8-9032-23a6209057cb)
 
