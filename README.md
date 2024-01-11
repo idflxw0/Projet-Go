@@ -1,10 +1,10 @@
 # Projet-Go
 Periode B : Projet Go <br />
 Groupe 205-206 : <br />
-Gobigan MATHIALAHAN <br />
-Riad FAROUZI <br />
-Félix WANG <br />
-John LI <br />
+Gobigan MATHIALAHAN, Grp 205 <br />
+Riad FAROUZI, Grp 206 <br />
+Félix WANG, Grp 206<br />
+John LI, Grp 206 <br />
 
 
 Ce qui marche:
