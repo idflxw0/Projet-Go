@@ -1,4 +1,8 @@
 # Projet-Go
+Note 15/20
+IBoard ne sert à rien
+
+
 Periode B : Projet Go <br />
 Groupe 205-206 : <br />
 Gobigan MATHIALAHAN, Grp 205 <br />
